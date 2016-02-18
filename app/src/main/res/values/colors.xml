@@ -3,4 +3,19 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--activity_login-->
+    <color name="colorText">#c7c7c7</color>
+    <color name="colorLine">#e5e5e5</color>
+    <color name="colorActivated">#00a1be</color>
+    <color name="colorAfterTouch">#969696</color>
+
+    <!--activity_education_reg-->
+    <color name="colorBeforeChecked">#b9b9b9</color>
+    <color name="colorAfterChecked">#00a1be</color>
+    <color name="colorText2">#6c6c6c</color>
+    <color name="colorRBSelected">#00a1be</color>
+    <color name="colorRBUnselected">#ffffff</color>
+
+
 </resources>
