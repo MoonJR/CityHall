@@ -33,4 +33,6 @@
     <string name="education_reg_type_1">직무</string>
     <string name="education_reg_type_2">소양</string>
     <string name="education_reg_edu_reg">등록완료</string>
+    <string name="test">테스트2</string>
+
 </resources>
