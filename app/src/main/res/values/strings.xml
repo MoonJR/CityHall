@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">CityHall</string>
+    <string name="login_title">시청 교육 관리</string>
+    <string name="login_passwd_hint">패스워드를 입력하세요.</string>
+    <string name="login_id_hint">코드를 입력하세요.</string>
+    <string name="login_submit">로그인</string>
+    <string name="education_list_work_data_update">직원정보 업데이트</string>
+    <string name="education_list_education_data_upload">교육정보 업로드</string>
+    <string name="education_list_reg">등록</string>
+    <string name="education_reg_sub_edu_name">교육명</string>
+    <string name="education_reg_sub_edu_name_hint">교육명을 입력하세요</string>
+    <string name="education_reg_sub_edu_location">장소</string>
+    <string name="education_reg_sub_edu_location_hint">장소를 입력하세요.</string>
+    <string name="education_reg_sub_edu_part">주관부서</string>
+    <string name="education_reg_sub_edu_part_hint">주관부서를 입력하세요.</string>
+    <string name="education_reg_sub_edu_start">시작일자</string>
+    <string name="education_reg_sub_edu_start_hint">시작일자를 입력하세요.</string>
+    <string name="education_reg_sub_edu_end">종료일자</string>
+    <string name="education_reg_sub_edu_end_hint">종료일자를 입력하세요.</string>
+    <string name="education_reg_sub_edu_time">교육시간</string>
+    <string name="education_reg_sub_edu_time_hint">교육시간을 선택하세요.</string>
+    <string name="education_reg_target">대상</string>
+    <string name="education_reg_target_0">전직원</string>
+    <string name="education_reg_target_1">5급 이상</string>
+    <string name="education_reg_target_2">6급</string>
+    <string name="education_reg_target_3">7급</string>
+    <string name="education_reg_target_4">8급</string>
+    <string name="education_reg_target_5">9급</string>
+    <string name="education_reg_target_6">기능직</string>
+    <string name="education_reg_target_7">기타</string>
+    <string name="education_reg_type">유형</string>
+    <string name="education_reg_type_0">시책</string>
+    <string name="education_reg_type_1">직무</string>
+    <string name="education_reg_type_2">소양</string>
+    <string name="education_reg_edu_reg">등록완료</string>
+</resources>
