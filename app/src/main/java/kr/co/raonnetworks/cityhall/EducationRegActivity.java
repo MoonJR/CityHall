@@ -14,6 +14,7 @@ import android.widget.RadioGroup;
 import android.widget.TimePicker;
 
 import kr.co.raonnetworks.cityhall.libs.CheckableButton;
+import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
 
 /**
@@ -63,17 +64,17 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
                 mEducationModel.setEduName(findViewById(R.id.editTextEduName));
                 mEducationModel.setEduLocation(findViewById(R.id.editTextEduLocation));
                 mEducationModel.setEduPart(findViewById(R.id.editTextEduPart));
-                mEducationModel.setEduTime(findViewById(R.id.editTextEduTime));
                 mEducationModel.setEduStart(findViewById(R.id.editTextEduStart));
                 mEducationModel.setEduEnd(findViewById(R.id.editTextEduEnd));
 
-                mEducationModel.setIsTarget(mCheckableButtonTargets);
+                mEducationModel.setEduTarget(mCheckableButtonTargets);
                 mEducationModel.setEduType((RadioButton) findViewById(((RadioGroup) findViewById(R.id.radioGroupType)).getCheckedRadioButtonId()));
 
                 if (!mEducationModel.checkSum()) {
                     return;
                 }
 
+                DBManager.addEdu(this, mEducationModel);
                 Log.d("test", mEducationModel.toString());
                 break;
         }

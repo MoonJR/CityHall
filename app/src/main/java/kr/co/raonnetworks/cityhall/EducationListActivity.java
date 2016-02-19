@@ -16,6 +16,8 @@ import android.widget.Toast;
  */
 public class EducationListActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final int RESULT_CODE = 123;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

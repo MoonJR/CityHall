@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import kr.co.raonnetworks.cityhall.R;
 import kr.co.raonnetworks.cityhall.libs.CheckableButton;
@@ -20,19 +21,23 @@ import kr.co.raonnetworks.cityhall.libs.CheckableButton;
  */
 public class EducationModel implements Serializable {
 
+    public static final int[] EDU_TARGET = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01,};
+
     private SimpleDateFormat mSimpleDateFormat;
 
+    private String eduId;
     private String eduName;
     private String eduLocation;
     private String eduPart;
-    private String eduTime;
     private String eduType;
     private Date eduEnd, eduStart;
 
-    private boolean[] isTarget;
+    private int eduTarget;
+
 
     public EducationModel() {
         mSimpleDateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+        this.eduId = UUID.randomUUID().toString();
     }
 
     public String getEduName() {
@@ -72,24 +77,16 @@ public class EducationModel implements Serializable {
     }
 
 
-    public String getEduTime() {
-        return eduTime;
-    }
-
-    public void setEduTime(String eduTime) {
-        this.eduTime = eduTime;
-    }
-
-    public void setEduTime(View eduTime) {
-        this.eduTime = getStringFromView(eduTime);
-    }
-
     public Date getEduEnd() {
         return eduEnd;
     }
 
     public void setEduEnd(Date eduEnd) {
         this.eduEnd = eduEnd;
+    }
+
+    public void setEduEnd(long eduEnd) {
+        this.eduEnd = new Date(eduEnd);
     }
 
     public void setEduEnd(View eduEnd) {
@@ -108,6 +105,10 @@ public class EducationModel implements Serializable {
         this.eduStart = eduStart;
     }
 
+    public void setEduStart(long eduStart) {
+        this.eduStart = new Date(eduStart);
+    }
+
     public void setEduStart(View eduStart) {
         try {
             this.eduStart = mSimpleDateFormat.parse(getStringFromView(eduStart));
@@ -118,6 +119,10 @@ public class EducationModel implements Serializable {
 
     public String getEduType() {
         return eduType;
+    }
+
+    public void setEduType(String eduType) {
+        this.eduType = eduType;
     }
 
     public void setEduType(RadioButton eduType) {
@@ -137,15 +142,21 @@ public class EducationModel implements Serializable {
         }
     }
 
-    public boolean[] getIsTarget() {
-        return isTarget;
+    public int getEduTarget() {
+        return eduTarget;
     }
 
-    public void setIsTarget(CheckableButton[] buttons) {
-        this.isTarget = new boolean[buttons.length];
+    public void setEduTarget(CheckableButton[] buttons) {
+
         for (int i = 0; i < buttons.length; i++) {
-            this.isTarget[i] = buttons[i].isChecked();
+            if (buttons[i].isChecked()) {
+                this.eduTarget |= EDU_TARGET[i];
+            }
         }
+    }
+
+    public void setEduTarget(int eduTarget) {
+        this.eduTarget = eduTarget;
     }
 
     private String getStringFromView(View v) {
@@ -163,8 +174,16 @@ public class EducationModel implements Serializable {
         }
     }
 
+    public void setEduId(String eduId) {
+        this.eduId = eduId;
+    }
+
+    public String getEduId() {
+        return this.eduId;
+    }
+
     public boolean checkSum() {
-        return this.eduName != null && this.eduLocation != null && this.eduPart != null && this.eduTime != null && this.eduType != null && this.eduEnd != null && this.isTarget != null;
+        return this.eduName != null && this.eduLocation != null && this.eduPart != null && this.eduType != null && this.eduEnd != null;
     }
 
 
@@ -174,13 +193,15 @@ public class EducationModel implements Serializable {
         tmp.put("eduName", this.eduName);
         tmp.put("eduLocation", this.eduLocation);
         tmp.put("eduPart", this.eduPart);
-        tmp.put("eduTime", this.eduTime);
         tmp.put("eduStart", this.eduStart != null ? Long.toString(this.eduStart.getTime()) : null);
         tmp.put("eduEnd", this.eduEnd != null ? Long.toString(this.eduEnd.getTime()) : null);
         tmp.put("eduType", this.eduType);
-        tmp.put("isTarget", Arrays.toString(isTarget));
-
+        tmp.put("eduTarget", Integer.toBinaryString(eduTarget));
         return tmp.toString();
+    }
+
+    public Object[] toObjectArray() {
+        return new Object[]{eduId, eduName, eduLocation, eduPart, eduStart, eduEnd, eduTarget, eduType};
     }
 
 
