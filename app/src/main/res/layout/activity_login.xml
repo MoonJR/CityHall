@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="50px"
+    android:padding="17dp"
     android:weightSum="1"
     tools:context="kr.co.raonnetworks.cityhall.LoginActivity">
 

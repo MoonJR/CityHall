@@ -9,8 +9,12 @@
 
         <item name="colorControlActivated">@color/colorActivated</item>
         <item name="colorButtonNormal">@color/colorActivated</item>
+        <item name="android:radioButtonStyle">@style/RadioButton</item>
 
+    </style>
 
+    <style name="RadioButton" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:button">@drawable/radio_button_color_selector</item>
     </style>
 
 </resources>
