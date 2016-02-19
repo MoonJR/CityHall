@@ -197,7 +197,6 @@ public class EducationModel implements Serializable {
         tmp.put("eduEnd", this.eduEnd != null ? Long.toString(this.eduEnd.getTime()) : null);
         tmp.put("eduType", this.eduType);
         tmp.put("eduTarget", Integer.toBinaryString(eduTarget));
-
         return tmp.toString();
     }
 

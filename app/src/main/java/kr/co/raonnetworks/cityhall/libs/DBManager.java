@@ -26,22 +26,18 @@ public class DBManager {
         if (!educationModel.checkSum()) {
             throw new CityHallDBException();
         }
-
         SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
         String query = makeQuery("INSERT INTO EDUCATION (EDU_ID, EDU_NAME, EDU_LOCATION, EDU_PART, EDU_START, EDU_END, EDU_TARGET, EDU_TYPE) VALUES(?,?,?,?,?,?,?,?)", educationModel.toObjectArray());
         db.execSQL(query);
-
-        Log.d("test", Arrays.toString(getEdu(context)));
-
     }
 
-    public static EducationModel[] getEdu(Context context) {
+    public static ArrayList<EducationModel> getEdu(Context context) {
         SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = "SELECT EDU_ID, EDU_NAME, EDU_LOCATION, EDU_PART, EDU_START, EDU_END, EDU_TARGET, EDU_TYPE FROM EDU";
+        String query = "SELECT EDU_ID, EDU_NAME, EDU_LOCATION, EDU_PART, EDU_START, EDU_END, EDU_TARGET, EDU_TYPE FROM EDUCATION";
 
         Cursor cursor = db.rawQuery(query, null);
 
-        List<EducationModel> modelList = new ArrayList<>();
+        ArrayList<EducationModel> modelList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
@@ -59,7 +55,7 @@ public class DBManager {
         }
         cursor.close();
 
-        return (EducationModel[]) modelList.toArray();
+        return modelList;
     }
 
 
