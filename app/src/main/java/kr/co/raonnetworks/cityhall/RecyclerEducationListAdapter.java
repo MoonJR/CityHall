@@ -73,7 +73,7 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
 //        public TextView mTextViewRemainSeatCount;
 //        public TextView mTextViewDistance;
 
-        public TextView mTextView
+        public TextView mTextView;
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
