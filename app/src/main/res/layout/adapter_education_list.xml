@@ -1,126 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutMain"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:orientation="vertical">
+    android:layout_height="match_parent"
+    app:mrl_rippleOverlay="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <LinearLayout
-            android:layout_width="180px"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="180px"
-                android:layout_height="180px"
-                android:layout_weight="3"
-                android:background="@drawable/reg_type_off"
-                android:gravity="center"
-                android:text="시책" />
-
-        </LinearLayout>
+        android:layout_height="80dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center_vertical"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="교육정보 업로드"
-                android:textSize="17dp"
-                android:textStyle="bold"/>
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="2dp"
-                android:paddingBottom="4dp"
-                android:orientation="horizontal">
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text="2016/01/01"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text=" "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text="14:00"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text=" ~ "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text="2016/01/01"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text=" "/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="12dp"
-                    android:text="14:00"/>
+                    android:id="@+id/textViewType"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/reg_type_off"
+                    android:gravity="center"
+                    android:text="시책" />
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="전직원"
-                android:textSize="13dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="교육정보 업로드"
+                    android:textSize="17dp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="4dp"
+                    android:paddingTop="2dp">
+
+                    <TextView
+                        android:id="@+id/textViewStart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2016/01/01 14:00"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" ~ "
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/textViewEnd"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2016/01/01 14:00"
+                        android:textColor="@android:color/darker_gray"
+                        android:textSize="12dp" />
+
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textViewTarget"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|left"
+                        android:text="전직원"
+                        android:textSize="13dp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right|bottom"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textViewTargetNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="명 출석" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="180px"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="right|bottom">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="명 출석" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="@android:color/darker_gray" />
 
-        </LinearLayout>
+
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_weight="1"
-        android:background="@android:color/darker_gray" />
 
+</com.balysv.materialripple.MaterialRippleLayout>
 
-</LinearLayout>

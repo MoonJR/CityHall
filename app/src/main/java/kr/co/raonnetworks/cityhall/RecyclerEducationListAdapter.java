@@ -1,13 +1,17 @@
 package kr.co.raonnetworks.cityhall;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
 
 /**
@@ -18,34 +22,38 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
     private Context mContext;
     private ArrayList<EducationModel> datas;
 
+
     public RecyclerEducationListAdapter(Context mContext, ArrayList<EducationModel> datas) {
         this.mContext = mContext;
         this.datas = datas;
 
     }
 
-    // Create new views (invoked by the layout manager)
     @Override
     public RecyclerEducationListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                       int viewType) {
-        // create a new view
-//        View itemLayoutView = LayoutInflater.from(parent.getContext())
-//                .inflate(R.layout.adapter_bus_route_list, parent, false);
-
-        // create ViewHolder
-
-        return null;
+        View itemLayoutView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.adapter_education_list, parent, false);
+        return new ViewHolder(itemLayoutView);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-        // - get data from your itemsData at this position
-        // - replace the contents of the view with that itemsData
-
-        EducationModel data = this.datas.get(position);
-
+        final EducationModel data = this.datas.get(position);
+        viewHolder.mTextViewName.setText(data.getEduName());
+        viewHolder.mTextViewType.setText(data.getEduType());
+        viewHolder.mTextViewTarget.setText(data.getEduTargetString());
+        viewHolder.mTextViewStart.setText(data.getEduStartString());
+        viewHolder.mTextViewEnd.setText(data.getEduEndString());
+        viewHolder.mLayoutMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent mIntentEducationDetail = new Intent(mContext, EducationDetailActivity.class);
+                mIntentEducationDetail.putExtra("eduId", data.getEduId());
+                mContext.startActivity(mIntentEducationDetail);
+            }
+        });
     }
 
     @Override
@@ -57,32 +65,29 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
         }
     }
 
-    public ArrayList<EducationModel> getData() {
-        return datas;
+    public void notifyUpdate() {
+        this.datas = DBManager.getEdu(mContext);
+        notifyDataSetChanged();
     }
 
-
-    // inner class to hold a reference to each item of RecyclerView
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-//        public ViewGroup mLayoutAdapterMain;
-//        public ViewGroup mLayoutBus;
-//
-//        public TextView mTextViewPlateNo;
-//        public TextView mTextViewStationNm;
-//        public TextView mTextViewRemainSeatCount;
-//        public TextView mTextViewDistance;
-
-        public TextView mTextView;
+        public ViewGroup mLayoutMain;
+        public TextView mTextViewName;
+        public TextView mTextViewType;
+        public TextView mTextViewTarget;
+        public TextView mTextViewStart;
+        public TextView mTextViewEnd;
+        public TextView mTextViewTargetNumber;
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
-//            mLayoutAdapterMain = (ViewGroup) itemLayoutView.findViewById(R.id.layoutAdapterMain);
-//            mLayoutBus = (ViewGroup) itemLayoutView.findViewById(R.id.layoutBus);
-//            mTextViewStationNm = (TextView) itemLayoutView.findViewById(R.id.textViewStationNm);
-//            mTextViewPlateNo = (TextView) itemLayoutView.findViewById(R.id.textViewPlateNo);
-//            mTextViewRemainSeatCount = (TextView) itemLayoutView.findViewById(R.id.textViewRemainSeatCount);
-//            mTextViewDistance = (TextView) itemLayoutView.findViewById(R.id.textViewDistance);
+            mTextViewName = (TextView) itemLayoutView.findViewById(R.id.textViewName);
+            mTextViewType = (TextView) itemLayoutView.findViewById(R.id.textViewType);
+            mTextViewTarget = (TextView) itemLayoutView.findViewById(R.id.textViewTarget);
+            mTextViewStart = (TextView) itemLayoutView.findViewById(R.id.textViewStart);
+            mTextViewEnd = (TextView) itemLayoutView.findViewById(R.id.textViewEnd);
+            mLayoutMain = (ViewGroup) itemLayoutView.findViewById(R.id.layoutMain);
         }
     }
 

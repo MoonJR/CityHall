@@ -21,7 +21,10 @@ import kr.co.raonnetworks.cityhall.libs.CheckableButton;
  */
 public class EducationModel implements Serializable {
 
+
+    public static final String EDU_DATA_PATTERN = "yyyy/MM/dd hh:mm";
     public static final int[] EDU_TARGET = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01,};
+    private final String[] EDU_TARGET_NAME = {"전직원", "5급 이상", "6급", "7급", "8급", "9급", "기능직", "기타"};
 
     private SimpleDateFormat mSimpleDateFormat;
 
@@ -30,13 +33,14 @@ public class EducationModel implements Serializable {
     private String eduLocation;
     private String eduPart;
     private String eduType;
+    private int eduAttendanceNumber;
     private Date eduEnd, eduStart;
 
     private int eduTarget;
 
 
     public EducationModel() {
-        mSimpleDateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
+        mSimpleDateFormat = new SimpleDateFormat(EDU_DATA_PATTERN);
         this.eduId = UUID.randomUUID().toString();
     }
 
@@ -101,12 +105,21 @@ public class EducationModel implements Serializable {
         return eduStart;
     }
 
+    public String getEduStartString() {
+        return mSimpleDateFormat.format(this.eduStart);
+    }
+
     public void setEduStart(Date eduStart) {
         this.eduStart = eduStart;
     }
 
+
     public void setEduStart(long eduStart) {
         this.eduStart = new Date(eduStart);
+    }
+
+    public String getEduEndString() {
+        return mSimpleDateFormat.format(this.eduEnd);
     }
 
     public void setEduStart(View eduStart) {
@@ -144,6 +157,28 @@ public class EducationModel implements Serializable {
 
     public int getEduTarget() {
         return eduTarget;
+    }
+
+
+    public String getEduTargetString() {
+        String result = "";
+        for (int i = 0; i < EDU_TARGET.length; i++) {
+            if ((this.eduTarget & EDU_TARGET[i]) > 0) {
+                result += EDU_TARGET_NAME[i] + ",";
+            }
+        }
+
+        if (result.endsWith(",")) {
+            result = result.substring(0, result.length() - 1);
+        } else if (result.equals("")) {
+            result = "미지정";
+        }
+
+        return result;
+    }
+
+    public boolean isEduTarget(WorkerModel workerModel) {
+        return (this.eduTarget & workerModel.getWorkerPosition()) > 0;
     }
 
     public void setEduTarget(CheckableButton[] buttons) {
@@ -205,4 +240,11 @@ public class EducationModel implements Serializable {
     }
 
 
+    public int getEduAttendanceNumber() {
+        return eduAttendanceNumber;
+    }
+
+    public void setEduAttendanceNumber(int eduAttendanceNumber) {
+        this.eduAttendanceNumber = eduAttendanceNumber;
+    }
 }
