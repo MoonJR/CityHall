@@ -20,11 +20,11 @@ import android.widget.Toast;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 import kr.co.raonnetworks.cityhall.EducationRegActivity;
-=======
+//=======
 import kr.co.raonnetworks.cityhall.LoginActivity;
->>>>>>> master
+//>>>>>>> master
 import kr.co.raonnetworks.cityhall.R;
 
 /**
