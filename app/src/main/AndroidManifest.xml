@@ -24,9 +24,12 @@
         </activity>
 
         <activity android:name=".LoginActivity" />
-        <activity android:name=".EducationListActivity" />
-        <activity android:name=".EducationRegActivity" />
-        <activity android:name=".EducationDetailActivity" />
+        <activity android:name=".EducationListActivity"
+            android:label="의정부시청 교육 내역"/>
+        <activity android:name=".EducationRegActivity"
+            android:label="교육 등록"/>
+        <activity android:name=".EducationDetailActivity"
+            android:label="상세 교육 내역"/>
         <activity
             android:name=".AttendanceCheckDialog"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
