@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -28,17 +29,21 @@
                 android:paddingLeft="10dp"
                 android:text="교육정보 업로드"
                 android:textSize="20dp"
+                android:textColor="@color/colorText2"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="76" />
+                android:text="76"
+                android:textColor="@color/colorText2"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
+                android:textColor="@color/colorText2"
                 android:text=" 명 출석" />
 
         </LinearLayout>
@@ -64,6 +69,7 @@
                 <TextView
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/colorText4"
                     android:text="・ 직원DB"
                     android:textSize="13sp" />
 
@@ -71,6 +77,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="@color/colorText4"
                     android:text=":  "
                     android:textSize="13sp" />
 
@@ -79,6 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
+                    android:textColor="@color/colorText4"
                     android:text="2016_의정부시청_csv"
                     android:textSize="13sp" />
 
@@ -95,6 +103,7 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="・ 장소"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -102,6 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=":  "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -110,6 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text="대강당"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -125,6 +136,7 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="・ 주관부서"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -132,6 +144,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=":  "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -140,6 +153,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text="총무과"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -155,6 +169,7 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="・ 교육일정"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -162,6 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=":  "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -170,6 +186,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text="2016/01/01 14:00"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -177,6 +194,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text=" ~ "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -185,6 +203,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text="2016/01/01 14:00"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -200,6 +219,7 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="・ 대상"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -207,6 +227,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=":  "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -215,6 +236,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text="7급, 8급, 9급"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -230,6 +252,7 @@
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:text="・ 유형"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -237,6 +260,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text=":  "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -245,6 +269,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
                     android:text="소양"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -332,17 +357,18 @@
                 android:text="태그"
                 android:textColor="@color/colorText2" />
         </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="15dp"
-            android:text="홍길동      14:00      16:00     120분     ABCDEFGHIJK" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
             android:background="@color/colorText2" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="15dp"
+            android:textColor="@color/colorText4"
+            android:text="홍길동      14:00      16:00     120분     ABCDEFGHIJK" />
+
+
 
 
     </LinearLayout>

@@ -5,6 +5,7 @@
     <string name="login_id_hint">코드를 입력하세요.</string>
     <string name="login_submit">로그인</string>
     <string name="education_list_work_data_update">직원정보 업데이트</string>
+    <string name="education_list_work_data_initialization">직원정보 초기화</string>
     <string name="education_list_education_data_upload">교육정보 업로드</string>
     <string name="education_list_reg">등록</string>
     <string name="education_reg_sub_edu_name">교육명</string>

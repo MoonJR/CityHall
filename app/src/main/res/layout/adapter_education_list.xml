@@ -5,6 +5,7 @@
     android:id="@+id/layoutMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     app:mrl_rippleOverlay="true">
 
     <LinearLayout
@@ -19,21 +20,30 @@
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <LinearLayout
-                android:layout_width="80dp"
+            <FrameLayout
+                android:layout_width="65dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textViewType"
-                    android:layout_width="70dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="3"
-                    android:background="@drawable/reg_type_off"
-                    android:gravity="center"
-                    android:text="시책" />
 
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/reg_type_off"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/textViewType"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:text="시책" />
+                </LinearLayout>
+
+
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -48,7 +58,9 @@
                     android:layout_height="wrap_content"
                     android:text="교육정보 업로드"
                     android:textSize="17dp"
+                    android:textColor="@color/colorText2"
                     android:textStyle="bold" />
+
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -62,14 +74,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2016/01/01 14:00"
-                        android:textColor="@android:color/darker_gray"
+                        android:textColor="@color/colorText3"
                         android:textSize="12dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" ~ "
-                        android:textColor="@android:color/darker_gray"
+                        android:textColor="@color/colorText3"
                         android:textSize="12dp" />
 
                     <TextView
@@ -77,7 +89,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2016/01/01 14:00"
-                        android:textColor="@android:color/darker_gray"
+                        android:textColor="@color/colorText3"
                         android:textSize="12dp" />
 
 
@@ -89,10 +101,13 @@
 
                     <TextView
                         android:id="@+id/textViewTarget"
-                        android:layout_width="wrap_content"
+                        android:layout_width="230dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|left"
                         android:text="전직원"
+                        android:textColor="@color/colorText4"
+                        android:ellipsize="end"
+                        android:singleLine="true"
                         android:textSize="13dp" />
 
                     <LinearLayout
@@ -105,11 +120,13 @@
                             android:id="@+id/textViewAttendanceCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/colorText4"
                             android:text="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/colorText4"
                             android:text="명 출석" />
 
                     </LinearLayout>
