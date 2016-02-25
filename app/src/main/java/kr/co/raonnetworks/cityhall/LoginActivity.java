@@ -8,19 +8,19 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import kr.co.raonnetworks.cityhall.libs.ConfigManager;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final String ROOT_ID = "mox7050";
-    private final String ROOT_PASSWD = "123";
-
+    ConfigManager mConfigManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        mConfigManager = ConfigManager.getInstance(getContext());
         //변경해야할것
-        ((EditText) findViewById(R.id.editTextId)).setText(ROOT_ID);
+        ((EditText) findViewById(R.id.editTextId)).setText(mConfigManager.getId());
 
         findViewById(R.id.buttonLogin).setOnClickListener(this);
 
@@ -30,9 +30,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonLogin:
-
                 String inputPasswd = ((EditText) findViewById(R.id.editTextPasswd)).getText().toString();
-                if (inputPasswd.equals(ROOT_PASSWD)) {
+                if (inputPasswd.equals(mConfigManager.getPasswd())) {
                     startEducationListActivity();
                 } else {
                     Toast.makeText(this, "로그인 실패", Toast.LENGTH_LONG).show();

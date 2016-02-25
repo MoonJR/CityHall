@@ -46,6 +46,7 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
         viewHolder.mTextViewTarget.setText(data.getEduTargetString());
         viewHolder.mTextViewStart.setText(data.getEduStartString());
         viewHolder.mTextViewEnd.setText(data.getEduEndString());
+        viewHolder.mTextViewAttendanceCount.setText(Integer.toString(data.getEduAttendanceCount()));
         viewHolder.mLayoutMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +79,7 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
         public TextView mTextViewTarget;
         public TextView mTextViewStart;
         public TextView mTextViewEnd;
-        public TextView mTextViewTargetNumber;
+        public TextView mTextViewAttendanceCount;
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -87,6 +88,7 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
             mTextViewTarget = (TextView) itemLayoutView.findViewById(R.id.textViewTarget);
             mTextViewStart = (TextView) itemLayoutView.findViewById(R.id.textViewStart);
             mTextViewEnd = (TextView) itemLayoutView.findViewById(R.id.textViewEnd);
+            mTextViewAttendanceCount = (TextView) itemLayoutView.findViewById(R.id.textViewAttendanceCount);
             mLayoutMain = (ViewGroup) itemLayoutView.findViewById(R.id.layoutMain);
         }
     }
