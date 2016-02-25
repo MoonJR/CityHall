@@ -33,9 +33,9 @@ public class EducationModel implements Serializable {
     private String eduLocation;
     private String eduPart;
     private String eduType;
-    private int eduAttendanceNumber;
     private Date eduEnd, eduStart;
-
+    private int eduAttendanceCount;
+    private int eduUploaded;
     private int eduTarget;
 
 
@@ -177,12 +177,8 @@ public class EducationModel implements Serializable {
         return result;
     }
 
-    public boolean isEduTarget(WorkerModel workerModel) {
-        return (this.eduTarget & workerModel.getWorkerPosition()) > 0;
-    }
 
     public void setEduTarget(CheckableButton[] buttons) {
-
         for (int i = 0; i < buttons.length; i++) {
             if (buttons[i].isChecked()) {
                 this.eduTarget |= EDU_TARGET[i];
@@ -232,6 +228,7 @@ public class EducationModel implements Serializable {
         tmp.put("eduEnd", this.eduEnd != null ? Long.toString(this.eduEnd.getTime()) : null);
         tmp.put("eduType", this.eduType);
         tmp.put("eduTarget", Integer.toBinaryString(eduTarget));
+        tmp.put("eduAttendanceCount", Integer.toString(eduAttendanceCount));
         return tmp.toString();
     }
 
@@ -239,12 +236,19 @@ public class EducationModel implements Serializable {
         return new Object[]{eduId, eduName, eduLocation, eduPart, eduStart, eduEnd, eduTarget, eduType};
     }
 
-
-    public int getEduAttendanceNumber() {
-        return eduAttendanceNumber;
+    public int getEduUploaded() {
+        return eduUploaded;
     }
 
-    public void setEduAttendanceNumber(int eduAttendanceNumber) {
-        this.eduAttendanceNumber = eduAttendanceNumber;
+    public void setEduUploaded(int eduUploaded) {
+        this.eduUploaded = eduUploaded;
+    }
+
+    public int getEduAttendanceCount() {
+        return eduAttendanceCount;
+    }
+
+    public void setEduAttendanceCount(int eduAttendanceCount) {
+        this.eduAttendanceCount = eduAttendanceCount;
     }
 }

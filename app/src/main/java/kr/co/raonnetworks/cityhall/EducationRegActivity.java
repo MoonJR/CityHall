@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import kr.co.raonnetworks.cityhall.libs.CheckableButton;
+import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
 
@@ -26,6 +27,7 @@ import kr.co.raonnetworks.cityhall.model.EducationModel;
  */
 public class EducationRegActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
+    ConfigManager mConfigManager;
 
     int[] mButtonTargetIds = {R.id.buttonTarget0, R.id.buttonTarget1, R.id.buttonTarget2
             , R.id.buttonTarget3, R.id.buttonTarget4, R.id.buttonTarget5, R.id.buttonTarget6
@@ -40,6 +42,8 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_reg);
+
+        mConfigManager = ConfigManager.getInstance(getContext());
 
         findViewById(R.id.buttonReg).setOnClickListener(this);
 
@@ -126,14 +130,12 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
                                         ((EditText) findViewById(R.id.editTextEduTime)).setText(eduTime);
                                     }
                                 }
-
-
                             }
                         }
-                    }, 9, 0, false).show();
+                    }, mConfigManager.getHour(), mConfigManager.getMinute(), false).show();
                 }
             }
-        }, 2016, 1, 24).show();
+        }, mConfigManager.getYear(), mConfigManager.getMonth(), mConfigManager.getDay()).show();
     }
 
     private String makeEduTime(String start, String end) {

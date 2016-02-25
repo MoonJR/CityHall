@@ -41,10 +41,5 @@ public class SQLiteManager {
         }
     }
 
-    public static boolean isDBFileExist(Context mContext) {
-        File dbFile = new File(mContext.getFilesDir(), SQLITE_FILE_NAME);
-        return dbFile.exists();
-    }
-
 
 }

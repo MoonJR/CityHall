@@ -22,8 +22,10 @@ import kr.co.raonnetworks.cityhall.model.EducationModel;
  */
 public class EducationDetailActivity extends AppCompatActivity {
 
-    NfcAdapter mNfcAdapter;
-    PendingIntent mPendingIntentNfc;
+    private static EducationModel mEducationModel;
+
+    private NfcAdapter mNfcAdapter;
+    private PendingIntent mPendingIntentNfc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,7 @@ public class EducationDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_education_detail);
         initNfc();
         updateEduData();
+
     }
 
     private void initNfc() {
@@ -83,7 +86,7 @@ public class EducationDetailActivity extends AppCompatActivity {
 
     private void updateEduData() {
         String eduId = getIntent().getStringExtra("eduId");
-        EducationModel mEducationModel = DBManager.getEdu(getContext(), eduId);
+        mEducationModel = DBManager.getEdu(getContext(), eduId);
         if (mEducationModel == null) {
             Toast.makeText(getContext(), "잘못된 접근입니다.", Toast.LENGTH_LONG).show();
             finish();
@@ -100,4 +103,10 @@ public class EducationDetailActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.textViewType)).setText(mEducationModel.getEduType());
 
     }
+
+    public static EducationModel getEducationModel() {
+        return mEducationModel;
+    }
+
+
 }
