@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorRBUnselected"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -149,6 +149,7 @@
                 android:hint="@string/education_reg_sub_edu_time_hint"
                 android:paddingBottom="18dp"
                 android:paddingLeft="7dp"
+                android:editable="false"
                 android:textColorHint="@color/colorText"
                 android:textSize="15dp" />
 
