@@ -17,9 +17,6 @@ import kr.co.raonnetworks.cityhall.model.WorkerModel;
  * Created by MoonJongRak on 2015. 11. 27..
  */
 public class DBManager {
-    public static final byte FLAG_SUCCESS_ATTENDANCE = 0x00;
-    public static final byte FLAG_ALREADLY_ATTENDANCE = 0x01;
-
     public static void addEdu(Context context, EducationModel educationModel) {
         if (!educationModel.checkSum()) {
             throw new CityHallDBException();
@@ -101,7 +98,7 @@ public class DBManager {
     public static ArrayList<AttendanceModel> getAttendance(Context context, EducationModel eduModel) {
 
         SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = makeQuery("SELECT ATTENDANCE_ID, EDU_ID, WORKER_ID, WORKER_CARD, ATTENDANCE_TIME FROM ATTENDANCE WHERE EDU_ID=?", new Object[]{eduModel.getEduId()});
+        String query = makeQuery("SELECT ATTENDANCE.ATTENDANCE_ID, ATTENDANCE.EDU_ID, ATTENDANCE.WORKER_ID, ATTENDANCE.WORKER_CARD, ATTENDANCE.ATTENDANCE_TIME, WORKER.WORKER_NAME FROM ATTENDANCE LEFT OUTER JOIN WORKER ON ATTENDANCE.ATTENDANCE_ID=WORKER.WORKER_ID WHERE EDU_ID=?", new Object[]{eduModel.getEduId()});
         Cursor cursor = db.rawQuery(query, null);
 
         ArrayList<AttendanceModel> modelList = new ArrayList<>();
@@ -114,6 +111,7 @@ public class DBManager {
                 mAttAttendanceModel.setWorkerId(cursor.getString(cursor.getColumnIndex("WORKER_ID")));
                 mAttAttendanceModel.setAttendanceTime(cursor.getLong(cursor.getColumnIndex("ATTENDANCE_TIME")));
                 mAttAttendanceModel.setWorkerCard(cursor.getLong(cursor.getColumnIndex("WORKER_CARD")));
+                mAttAttendanceModel.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
                 modelList.add(mAttAttendanceModel);
             } while (cursor.moveToNext());
         }
@@ -133,7 +131,7 @@ public class DBManager {
 
     public static ArrayList<WorkerModel> getWorker(Context context) {
         SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = "SELECT WORK_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_STATUS FROM WORKER";
+        String query = "SELECT WORKER_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_STATUS FROM WORKER";
 
         Cursor cursor = db.rawQuery(query, null);
 
@@ -142,7 +140,7 @@ public class DBManager {
         if (cursor.moveToFirst()) {
             do {
                 WorkerModel mWorkerModelTmp = new WorkerModel();
-                mWorkerModelTmp.setWorkerId(cursor.getString(cursor.getColumnIndex("WORK_ID")));
+                mWorkerModelTmp.setWorkerId(cursor.getString(cursor.getColumnIndex("WORKER_ID")));
                 mWorkerModelTmp.setWorkerPart(cursor.getString(cursor.getColumnIndex("WORKER_PART")));
                 mWorkerModelTmp.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
                 mWorkerModelTmp.setWorkerCard(cursor.getInt(cursor.getColumnIndex("WORKER_CARD")));
@@ -157,14 +155,14 @@ public class DBManager {
 
     public static WorkerModel getWorker(Context context, long workerCard) {
         SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = makeQuery("SELECT WORK_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_STATUS FROM WORKER WHERE WORKER_CARD = ?", new Object[]{workerCard});
+        String query = makeQuery("SELECT WORKER_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_STATUS FROM WORKER WHERE WORKER_CARD = ?", new Object[]{workerCard});
 
         Cursor cursor = db.rawQuery(query, null);
 
         WorkerModel mWorkerModelTmp = null;
         if (cursor.moveToFirst()) {
             mWorkerModelTmp = new WorkerModel();
-            mWorkerModelTmp.setWorkerId(cursor.getString(cursor.getColumnIndex("WORK_ID")));
+            mWorkerModelTmp.setWorkerId(cursor.getString(cursor.getColumnIndex("WORKER_ID")));
             mWorkerModelTmp.setWorkerPart(cursor.getString(cursor.getColumnIndex("WORKER_PART")));
             mWorkerModelTmp.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
             mWorkerModelTmp.setWorkerCard(cursor.getInt(cursor.getColumnIndex("WORKER_CARD")));

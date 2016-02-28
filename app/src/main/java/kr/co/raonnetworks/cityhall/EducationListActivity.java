@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
+import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.AttendanceModel;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
@@ -45,7 +46,7 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
 
         RecyclerView mRecyclerViewEducationList = (RecyclerView) findViewById(R.id.recyclerViewEducationList);
         mRecyclerViewEducationList.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerEducationListAdapter = new RecyclerEducationListAdapter(getContext(), new ArrayList<EducationModel>());
+        mRecyclerEducationListAdapter = new RecyclerEducationListAdapter(getContext());
         mRecyclerViewEducationList.setAdapter(mRecyclerEducationListAdapter);
 
         findViewById(R.id.buttonUploadData).setOnClickListener(this);
@@ -192,9 +193,9 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
         for (int i = 0; i < dataTmp.length; i++) {
             String[] dataTmp2 = dataTmp[i].split("=\\|");
             if (i == 0) {
-                String time = dataTmp2[3];
+                ConfigManager.getInstance(getContext()).setTime(dataTmp2[3]);
             } else if (i == dataTmp.length - 1) {
-
+                break;
             } else {
                 for (int j = 0; j < dataTmp2.length; j++) {
                     try {
@@ -326,15 +327,11 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
         }
 
         private String getAttendanceQuery(AttendanceModel mAttendanceModel) {
-
             if (mAttendanceModel.getWorkerId() != null) {
                 return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|\r";
             } else {
                 return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|\r";
             }
-
-
-            // card=|카드번호=|카드체크시간=|
         }
 
 

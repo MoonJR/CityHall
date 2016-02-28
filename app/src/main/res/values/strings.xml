@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CityHall</string>
+    <string name="app_name">스마트 출결</string>
     <string name="login_title">시청 교육 관리</string>
     <string name="login_passwd_hint">패스워드를 입력하세요.</string>
     <string name="login_id_hint">코드를 입력하세요.</string>
