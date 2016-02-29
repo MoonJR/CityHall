@@ -2,41 +2,29 @@ package kr.co.raonnetworks.cityhall;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.concurrent.TimeoutException;
-
 import kr.co.raonnetworks.cityhall.libs.DBManager;
-import kr.co.raonnetworks.cityhall.model.AttendanceModel;
-import kr.co.raonnetworks.cityhall.model.EducationModel;
-import kr.co.raonnetworks.cityhall.model.WorkerModel;
-import kr.co.raonnetworks.cityhall.test.FT311UARTInterface;
+import kr.co.raonnetworks.cityhall.libs.SerialManager;
 
 /**
  * Created by MoonJongRak on 2016. 2. 17..
  */
-public class EducationListActivity extends AppCompatActivity implements View.OnClickListener {
+public class EducationListActivity extends AppCompatActivity implements View.OnClickListener, SerialManager.OnSerialFinishedListener {
 
     private final int RESULT_CODE = 123;
-    private FT311UARTInterface serialInterface;
-    private byte[] writeBuffer;
-    private byte[] readBuffer;
-    private int[] actualNumBytes;
-
     private RecyclerEducationListAdapter mRecyclerEducationListAdapter;
+    private SerialManager mSerialManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +33,17 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
 
         RecyclerView mRecyclerViewEducationList = (RecyclerView) findViewById(R.id.recyclerViewEducationList);
         mRecyclerViewEducationList.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerEducationListAdapter = new RecyclerEducationListAdapter(getContext(), new ArrayList<EducationModel>());
+        mRecyclerEducationListAdapter = new RecyclerEducationListAdapter(getContext());
         mRecyclerViewEducationList.setAdapter(mRecyclerEducationListAdapter);
 
         findViewById(R.id.buttonUploadData).setOnClickListener(this);
+        findViewById(R.id.buttonResetWorker).setOnClickListener(this);
         findViewById(R.id.buttonUpdateWork).setOnClickListener(this);
 
-
-        this.writeBuffer = new byte[64];
-        this.readBuffer = new byte[4096];
-        this.actualNumBytes = new int[1];
-        this.serialInterface = new FT311UARTInterface(getContext(), null);
-        this.serialInterface.ResumeAccessory();
+        mSerialManager = new SerialManager(getContext());
+        mSerialManager.setOnSerialFinishedListener(this);
+        mSerialManager.setTimeout(5000);
+        mSerialManager.startSerial();
 
     }
 
@@ -93,10 +80,24 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonUpdateWork:
-                new WorkerUpdateThread("1=|0=|s=|\r", "1=|0=|e=|\r").start();
+                mSerialManager.startWorkerUpadte("1=|0=|s=|\r", "1=|0=|e=|\r");
+                break;
+            case R.id.buttonResetWorker:
+                new AlertDialog.Builder(getContext())
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setTitle("알림")
+                        .setMessage("직원 정보를 초기화 합니다.\n초기화를 진행하시겠습니까?")
+                        .setNegativeButton("취소", null)
+                        .setPositiveButton("초기화", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DBManager.resetWorker(getContext());
+                                Toast.makeText(getContext(), "직원 정보 초기화 완료!", Toast.LENGTH_LONG).show();
+                            }
+                        }).show();
                 break;
             case R.id.buttonUploadData:
-                new EducationUpLoadThread().start();
+                mSerialManager.startEducationUpLoad();
                 break;
         }
     }
@@ -117,51 +118,6 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
 
     }
 
-    private void writeData(FT311UARTInterface serial, String query) {
-
-        for (int i = 0; i < query.length(); ) {
-            int offset = i + 50;
-            if (offset > query.length()) {
-                offset = query.length();
-            }
-            String queryTmp = query.substring(i, offset);
-            Log.d("moon", "test:" + queryTmp);
-
-            int numBytes = queryTmp.length();
-            for (int j = 0; j < numBytes; j++) {
-                writeBuffer[j] = (byte) queryTmp.charAt(j);
-            }
-            serial.SendData(numBytes, writeBuffer);
-
-            i = offset;
-        }
-
-    }
-
-    private String readData(FT311UARTInterface serial) throws TimeoutException {
-
-        long startTime = System.currentTimeMillis();
-        StringBuilder builder = new StringBuilder();
-        while (true) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ignored) {
-            }
-            int status = serial.ReadData(4096, readBuffer, actualNumBytes);
-            if (status == 0x00 && actualNumBytes[0] > 0) {
-                startTime = System.currentTimeMillis();
-                final String tmp = new String(readBuffer, 0, actualNumBytes[0]);
-                builder.append(tmp);
-                if (builder.toString().contains("e=|")) {
-                    return builder.toString().trim();
-                }
-            }
-
-            if (System.currentTimeMillis() - startTime > 10000) {
-                throw new TimeoutException("수신 시간 초과");
-            }
-        }
-    }
 
     private ProgressDialog mProgressDialogDataProcess;
 
@@ -186,157 +142,25 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void upDateWorker(String data) {
-        String[] dataTmp = data.split("\r");
 
-        for (int i = 0; i < dataTmp.length; i++) {
-            String[] dataTmp2 = dataTmp[i].split("=\\|");
-            if (i == 0) {
-                String time = dataTmp2[3];
-            } else if (i == dataTmp.length - 1) {
-
-            } else {
-                for (int j = 0; j < dataTmp2.length; j++) {
-                    try {
-                        dataTmp2[j] = URLDecoder.decode(dataTmp2[j], "EUC-KR");
-                    } catch (UnsupportedEncodingException ignored) {
-                    }
-                }
-
-                WorkerModel mWorkerModelTmp = new WorkerModel();
-                mWorkerModelTmp.setWorkerId(dataTmp2[0]);
-                mWorkerModelTmp.setWorkerPart(dataTmp2[1]);
-                mWorkerModelTmp.setWorkerName(dataTmp2[2]);
-                if (dataTmp2[3].equals("-")) {
-                    mWorkerModelTmp.setWorkerCard(-1);
-                } else {
-                    mWorkerModelTmp.setWorkerCard(Long.parseLong(dataTmp2[3]));
-                }
-
-                if (dataTmp2[4].equals("y")) {
-                    mWorkerModelTmp.setWorkerStatus(1);
-                } else {
-                    mWorkerModelTmp.setWorkerStatus(0);
-                }
-                DBManager.addWorker(getContext(), mWorkerModelTmp);
-            }
+    @Override
+    public void onFinished(boolean isSuccess, Exception e) {
+        dismissProgressDialogDataProcess();
+        if (!isSuccess) {
+            Toast.makeText(getContext(), "서버 접속시간 초과.", Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     protected void onDestroy() {
-        serialInterface.DestroyAccessory(false);
+        mSerialManager.stopSerial();
         super.onDestroy();
     }
 
-    private class WorkerUpdateThread extends Thread {
-
-        private String startQuery, endQuery;
-
-        private WorkerUpdateThread(String startQuery, String endQuery) {
-            this.startQuery = startQuery;
-            this.endQuery = endQuery;
-        }
-
-        @Override
-        public void run() {
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showProgressDialogDataProcess(false);
-                }
-            });
-
-            writeData(serialInterface, startQuery);
-            try {
-                String updateData = readData(serialInterface);
-                upDateWorker(updateData);
-            } catch (TimeoutException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(), "수신 시간 초과", Toast.LENGTH_LONG).show();
-                    }
-                });
-                e.printStackTrace();
-            }
-            writeData(serialInterface, endQuery);
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    dismissProgressDialogDataProcess();
-                }
-            });
-
-        }
-    }
-
-    private class EducationUpLoadThread extends Thread {
-
-
-        ArrayList<EducationModel> mEducationModels;
-
-        private EducationUpLoadThread() {
-            mEducationModels = DBManager.getEdu(getContext());
-        }
-
-        @Override
-        public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showProgressDialogDataProcess(true);
-                }
-            });
-
-            for (EducationModel mEducationModel : mEducationModels) {
-                ArrayList<AttendanceModel> mAttendanceModels = DBManager.getAttendance(getContext(), mEducationModel);
-
-                StringBuilder builder = new StringBuilder();
-                builder.append(getEducationStartQuery(mEducationModel));
-                for (AttendanceModel mAttendanceModel : mAttendanceModels) {
-                    builder.append(getAttendanceQuery(mAttendanceModel));
-                }
-                builder.append(getEducationEndQuery(mEducationModel));
-                writeData(serialInterface, builder.toString());
-            }
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    dismissProgressDialogDataProcess();
-                }
-            });
-
-
-        }
-
-        private String getEducationStartQuery(EducationModel mEducationModel) {
-            try {
-                return "2=|" + mEducationModel.getEduAttendanceCount() + "=|s=|" + URLEncoder.encode(mEducationModel.getEduName(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduLocation(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduPart(), "EUC-KR") + "=|" + mEducationModel.getEduStart().getTime() + "=|" + mEducationModel.getEduEnd().getTime() + "=|" + (mEducationModel.getEduEnd().getTime() - mEducationModel.getEduStart().getTime()) + "=|" + URLEncoder.encode(mEducationModel.getEduTargetString(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduType(), "EUC-KR") + "=|\r";
-            } catch (UnsupportedEncodingException e) {
-                return null;
-            }
-        }
-
-        private String getEducationEndQuery(EducationModel mEducationModel) {
-            return "2=|" + mEducationModel.getEduAttendanceCount() + "=|e=|\r";
-        }
-
-        private String getAttendanceQuery(AttendanceModel mAttendanceModel) {
-
-            if (mAttendanceModel.getWorkerId() != null) {
-                return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|\r";
-            } else {
-                return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|\r";
-            }
-
-
-            // card=|카드번호=|카드체크시간=|
-        }
-
-
+    @Override
+    public void onStart(boolean isDataSend) {
+        showProgressDialogDataProcess(isDataSend);
     }
 }
+
+

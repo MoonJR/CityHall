@@ -28,23 +28,23 @@
                 android:layout_weight="7"
                 android:paddingLeft="10dp"
                 android:text="교육정보 업로드"
-                android:textSize="20dp"
                 android:textColor="@color/colorText2"
+                android:textSize="20dp"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/textViewAttendanceCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="76"
-                android:textColor="@color/colorText2"
-                />
+                android:textColor="@color/colorText2" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-                android:textColor="@color/colorText2"
-                android:text=" 명 출석" />
+                android:text=" 명 출석"
+                android:textColor="@color/colorText2" />
 
         </LinearLayout>
 
@@ -69,16 +69,16 @@
                 <TextView
                     android:layout_width="70dp"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorText4"
                     android:text="・ 직원DB"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/colorText4"
                     android:text=":  "
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
                 <TextView
@@ -86,8 +86,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="100"
-                    android:textColor="@color/colorText4"
                     android:text="2016_의정부시청_csv"
+                    android:textColor="@color/colorText4"
                     android:textSize="13sp" />
 
             </LinearLayout>
@@ -282,26 +282,17 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:paddingBottom="10dp"
+        android:paddingLeft="26dp"
+        android:paddingTop="5dp"
+        android:text="출석 현황"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="26dp"
-            android:paddingTop="5dp"
-            android:text="출석 현황"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.3dp"
-            android:background="@color/colorText2" />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -309,6 +300,11 @@
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:background="@color/colorText2" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -357,18 +353,16 @@
                 android:text="태그"
                 android:textColor="@color/colorText2" />
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
             android:background="@color/colorText2" />
-        <TextView
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerViewAttendanceList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="15dp"
-            android:textColor="@color/colorText4"
-            android:text="홍길동      14:00      16:00     120분     ABCDEFGHIJK" />
-
-
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>

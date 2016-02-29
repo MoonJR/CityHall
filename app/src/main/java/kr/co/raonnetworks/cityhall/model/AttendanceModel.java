@@ -11,6 +11,7 @@ public class AttendanceModel {
     private long workerCard;
     private String eduId;
     private String workerId;
+    private String workerName;
     private Date attendanceTime;
 
     public long getAttendanceId() {
@@ -55,5 +56,13 @@ public class AttendanceModel {
 
     public void setWorkerCard(long workerCard) {
         this.workerCard = workerCard;
+    }
+
+    public String getWorkerName() {
+        return workerName;
+    }
+
+    public void setWorkerName(String workerName) {
+        this.workerName = workerName;
     }
 }

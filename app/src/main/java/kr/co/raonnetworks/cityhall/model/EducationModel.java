@@ -22,7 +22,7 @@ import kr.co.raonnetworks.cityhall.libs.CheckableButton;
 public class EducationModel implements Serializable {
 
 
-    public static final String EDU_DATA_PATTERN = "yyyy/MM/dd hh:mm";
+    public static final String EDU_DATA_PATTERN = "yyyy/MM/dd HH:mm";
     public static final int[] EDU_TARGET = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01,};
     private final String[] EDU_TARGET_NAME = {"전직원", "5급 이상", "6급", "7급", "8급", "9급", "기능직", "기타"};
 
@@ -250,5 +250,53 @@ public class EducationModel implements Serializable {
 
     public void setEduAttendanceCount(int eduAttendanceCount) {
         this.eduAttendanceCount = eduAttendanceCount;
+    }
+
+    private static String getEduTime(long during) {
+        long day = 1000 * 60 * 60 * 24;
+        long hour = 1000 * 60 * 60;
+        long min = 1000 * 60;
+
+        long remainDay = during / day;
+        long remainHour = during % day / hour;
+        long remainMin = during % day % hour / min;
+
+        String result = "";
+        if (remainDay != 0) {
+            result += remainDay + "일 ";
+        }
+        if (remainHour != 0) {
+            result += remainHour + "시간 ";
+        }
+        if (remainMin != 0) {
+            result += remainMin + "분 ";
+        }
+
+        if (during <= 0 || result.equals("")) {
+            return null;
+        }
+
+        return result;
+    }
+
+    public static String getEduTime(String start, String end) {
+        SimpleDateFormat format = new SimpleDateFormat(EducationModel.EDU_DATA_PATTERN);
+        try {
+            long during = format.parse(end).getTime() - format.parse(start).getTime();
+            return getEduTime(during);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getEduTime(Date start, Date end) {
+        long during = end.getTime() - start.getTime();
+        return getEduTime(during);
+    }
+
+    public String getEduTime() {
+        long during = this.eduEnd.getTime() - this.eduStart.getTime();
+        return getEduTime(during);
     }
 }

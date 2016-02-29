@@ -5,17 +5,12 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import kr.co.raonnetworks.cityhall.libs.CheckableButton;
 import kr.co.raonnetworks.cityhall.libs.ConfigManager;
@@ -116,13 +111,13 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             if (view.isShown()) {
-                                String date = year + "/" + monthOfYear + "/" + dayOfMonth + " " + (hourOfDay < 10 ? "0" + hourOfDay : hourOfDay + "") + ":" + (minute < 10 ? "0" + minute : minute + "");
+                                String date = year + "/" + ((monthOfYear + 1) < 10 ? "0" + (monthOfYear + 1) : (monthOfYear + 1) + "") + "/" + dayOfMonth + " " + (hourOfDay < 10 ? "0" + hourOfDay : hourOfDay + "") + ":" + (minute < 10 ? "0" + minute : minute + "");
                                 ((EditText) v).setText(date);
                                 String startTimeTmp = ((EditText) findViewById(R.id.editTextEduStart)).getText().toString();
                                 String endTimeTmp = ((EditText) findViewById(R.id.editTextEduEnd)).getText().toString();
 
                                 if (!startTimeTmp.equals("") && !endTimeTmp.equals("")) {
-                                    String eduTime = makeEduTime(startTimeTmp, endTimeTmp);
+                                    String eduTime = EducationModel.getEduTime(startTimeTmp, endTimeTmp);
                                     if (eduTime == null) {
                                         ((EditText) v).setText("");
                                         ((EditText) v).setError("일정 종료시간이 일정 시작시간 보다 같거나 빠를 수 없습니다.");
@@ -136,42 +131,6 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
                 }
             }
         }, mConfigManager.getYear(), mConfigManager.getMonth(), mConfigManager.getDay()).show();
-    }
-
-    private String makeEduTime(String start, String end) {
-        SimpleDateFormat format = new SimpleDateFormat(EducationModel.EDU_DATA_PATTERN);
-        try {
-            long day = 1000 * 60 * 60 * 24;
-            long hour = 1000 * 60 * 60;
-            long min = 1000 * 60;
-
-            long during = format.parse(end).getTime() - format.parse(start).getTime();
-            long remainDay = during / day;
-            long remainHour = during % day / hour;
-            long remainMin = during % day % hour / min;
-
-            String result = "";
-            if (remainDay != 0) {
-                result += remainDay + "일 ";
-            }
-            if (remainHour != 0) {
-                result += remainHour + "시간 ";
-            }
-            if (remainMin != 0) {
-                result += remainMin + "분 ";
-            }
-
-            if (during <= 0 || result.equals("")) {
-                return null;
-            }
-
-            return result;
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
     }
 
 

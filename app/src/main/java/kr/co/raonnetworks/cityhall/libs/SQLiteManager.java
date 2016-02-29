@@ -17,7 +17,7 @@ public class SQLiteManager {
 
 
     private SQLiteManager(Context mContext) {
-        File dbFile = new File(mContext.getFilesDir(), SQLITE_FILE_NAME);
+        File dbFile = new File(mContext.getExternalFilesDir(null), SQLITE_FILE_NAME);
 
         mSqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(dbFile, null);
 

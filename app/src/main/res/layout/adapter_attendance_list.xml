@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/textViewName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:text="성명"
+        android:textColor="@color/colorText2" />
+
+    <TextView
+        android:id="@+id/textViewStart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:text="입실"
+        android:textColor="@color/colorText2" />
+
+    <TextView
+        android:id="@+id/textViewEnd"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:text="퇴실"
+        android:textColor="@color/colorText2" />
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="인정"
+        android:textColor="@color/colorText2" />
+
+    <TextView
+        android:id="@+id/textViewTag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5"
+        android:gravity="center"
+        android:text="태그"
+        android:textColor="@color/colorText2" />
+
+</LinearLayout>

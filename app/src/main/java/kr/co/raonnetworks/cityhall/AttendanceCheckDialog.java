@@ -33,6 +33,7 @@ public class AttendanceCheckDialog extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_attendance_check);
 
+
         mConfigManager = ConfigManager.getInstance(getContext());
 
         Tag mTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);

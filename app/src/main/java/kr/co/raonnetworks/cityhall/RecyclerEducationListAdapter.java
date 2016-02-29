@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import kr.co.raonnetworks.cityhall.libs.DBManager;
@@ -23,9 +22,9 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
     private ArrayList<EducationModel> datas;
 
 
-    public RecyclerEducationListAdapter(Context mContext, ArrayList<EducationModel> datas) {
+    public RecyclerEducationListAdapter(Context mContext) {
         this.mContext = mContext;
-        this.datas = datas;
+        this.datas = DBManager.getEdu(mContext);
 
     }
 

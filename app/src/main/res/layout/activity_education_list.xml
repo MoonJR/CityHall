@@ -23,6 +23,7 @@
 
         <!--버튼id 확인-->
         <Button
+            android:id="@+id/buttonResetWorker"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"

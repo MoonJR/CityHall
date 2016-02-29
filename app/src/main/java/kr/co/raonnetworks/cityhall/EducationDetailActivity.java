@@ -10,9 +10,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
@@ -26,13 +30,21 @@ public class EducationDetailActivity extends AppCompatActivity {
 
     private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntentNfc;
+    private RecyclerAttendanceListAdapter mRecyclerAttendanceListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_detail);
+
         initNfc();
         updateEduData();
+
+        mRecyclerAttendanceListAdapter = new RecyclerAttendanceListAdapter(getContext(), mEducationModel);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewAttendanceList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mRecyclerAttendanceListAdapter);
+
 
     }
 
@@ -70,6 +82,10 @@ public class EducationDetailActivity extends AppCompatActivity {
                 mNfcAdapter.enableForegroundDispatch(this, mPendingIntentNfc, null, null);
             }
         }
+
+        mRecyclerAttendanceListAdapter.notifyUpdate();
+        ((TextView) findViewById(R.id.textViewAttendanceCount)).setText(Integer.toString(mRecyclerAttendanceListAdapter.getItemCount()));
+
     }
 
     @Override
@@ -94,7 +110,7 @@ public class EducationDetailActivity extends AppCompatActivity {
         }
 
         ((TextView) findViewById(R.id.textViewName)).setText(mEducationModel.getEduName());
-        ((TextView) findViewById(R.id.textViewDataName)).setText("디비 네임");
+        ((TextView) findViewById(R.id.textViewDataName)).setText("null");
         ((TextView) findViewById(R.id.textViewLocation)).setText(mEducationModel.getEduLocation());
         ((TextView) findViewById(R.id.textViewPart)).setText(mEducationModel.getEduPart());
         ((TextView) findViewById(R.id.textViewStart)).setText(mEducationModel.getEduStartString());

@@ -3,6 +3,8 @@
     package="kr.co.raonnetworks.cityhall">
 
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.usb.accessory" />
     <uses-feature
@@ -22,19 +24,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
-
         </activity>
 
         <activity android:name=".LoginActivity" />
-        <activity android:name=".EducationListActivity"
-            android:label="의정부시청 교육 내역"/>
-        <activity android:name=".EducationRegActivity"
-            android:label="교육 등록"/>
-        <activity android:name=".EducationDetailActivity"
-            android:label="상세 교육 내역"/>
+        <activity
+            android:name=".EducationListActivity"
+            android:label="의정부시청 교육 내역">
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
+        </activity>
+        <activity
+            android:name=".EducationRegActivity"
+            android:label="교육 등록" />
+        <activity
+            android:name=".EducationDetailActivity"
+            android:label="상세 교육 내역" />
         <activity
             android:name=".AttendanceCheckDialog"
             android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
