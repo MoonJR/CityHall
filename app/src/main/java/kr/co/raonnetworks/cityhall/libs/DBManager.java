@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -98,7 +99,7 @@ public class DBManager {
     public static ArrayList<AttendanceModel> getAttendance(Context context, EducationModel eduModel) {
 
         SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = makeQuery("SELECT ATTENDANCE.ATTENDANCE_ID, ATTENDANCE.EDU_ID, ATTENDANCE.WORKER_ID, ATTENDANCE.WORKER_CARD, ATTENDANCE.ATTENDANCE_TIME, WORKER.WORKER_NAME FROM ATTENDANCE LEFT OUTER JOIN WORKER ON ATTENDANCE.ATTENDANCE_ID=WORKER.WORKER_ID WHERE EDU_ID=?", new Object[]{eduModel.getEduId()});
+        String query = makeQuery("SELECT ATTENDANCE.ATTENDANCE_ID, ATTENDANCE.EDU_ID, ATTENDANCE.WORKER_ID, ATTENDANCE.WORKER_CARD, ATTENDANCE.ATTENDANCE_TIME, WORKER.WORKER_NAME FROM ATTENDANCE LEFT OUTER JOIN WORKER ON ATTENDANCE.WORKER_ID=WORKER.WORKER_ID WHERE EDU_ID=?", new Object[]{eduModel.getEduId()});
         Cursor cursor = db.rawQuery(query, null);
 
         ArrayList<AttendanceModel> modelList = new ArrayList<>();
@@ -116,7 +117,6 @@ public class DBManager {
             } while (cursor.moveToNext());
         }
         cursor.close();
-
         return modelList;
     }
 
@@ -171,6 +171,12 @@ public class DBManager {
         cursor.close();
 
         return mWorkerModelTmp;
+    }
+
+    public static void resetWorker(Context context) {
+        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
+        String query = "DELETE FROM WORKER";
+        db.execSQL(query);
     }
 
     private static String makeQuery(String query, Object[] datas) throws CityHallDBException {
