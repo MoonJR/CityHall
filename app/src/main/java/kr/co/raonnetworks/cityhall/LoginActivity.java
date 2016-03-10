@@ -31,11 +31,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setTitle(mConfigManager.getLoginTitle());
         ((TextView) findViewById(R.id.textViewTitle)).setText(mConfigManager.getCityTitle());
         ((EditText) findViewById(R.id.editTextId)).setText(mConfigManager.getId());
-        File mFileLogo = new File(getExternalFilesDir(null), ConfigManager.LOGO_FILE_NAME);
-        if (!mFileLogo.exists()) {
+        if (!ConfigManager.LOGO_FILE.exists()) {
             Toast.makeText(getContext(), "로고 파일이 존재하지 않습니다.", Toast.LENGTH_LONG).show();
         } else {
-            ((ImageView) findViewById(R.id.imageViewLogo)).setImageBitmap(BitmapFactory.decodeFile(mFileLogo.getAbsolutePath()));
+            ((ImageView) findViewById(R.id.imageViewLogo)).setImageBitmap(BitmapFactory.decodeFile(ConfigManager.LOGO_FILE.getAbsolutePath()));
         }
         findViewById(R.id.buttonLogin).setOnClickListener(this);
 

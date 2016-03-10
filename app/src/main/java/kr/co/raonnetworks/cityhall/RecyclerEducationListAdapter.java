@@ -24,7 +24,7 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
 
     public RecyclerEducationListAdapter(Context mContext) {
         this.mContext = mContext;
-        this.datas = DBManager.getEdu(mContext);
+        this.datas = DBManager.getEdu();
 
     }
 
@@ -66,7 +66,7 @@ public class RecyclerEducationListAdapter extends RecyclerView.Adapter<RecyclerE
     }
 
     public void notifyUpdate() {
-        this.datas = DBManager.getEdu(mContext);
+        this.datas = DBManager.getEdu();
         notifyDataSetChanged();
     }
 

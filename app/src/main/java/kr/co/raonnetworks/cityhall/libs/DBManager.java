@@ -1,6 +1,5 @@
 package kr.co.raonnetworks.cityhall.libs;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,17 +17,17 @@ import kr.co.raonnetworks.cityhall.model.WorkerModel;
  * Created by MoonJongRak on 2015. 11. 27..
  */
 public class DBManager {
-    public static void addEdu(Context context, EducationModel educationModel) {
+    public static void addEdu(EducationModel educationModel) {
         if (!educationModel.checkSum()) {
             throw new CityHallDBException();
         }
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
         String query = makeQuery("INSERT INTO EDUCATION (EDU_ID, EDU_NAME, EDU_LOCATION, EDU_PART, EDU_START, EDU_END, EDU_TARGET, EDU_TYPE, EDU_UPLOADED) VALUES(?,?,?,?,?,?,?,?,?)", educationModel.toObjectArray());
         db.execSQL(query);
     }
 
-    public static ArrayList<EducationModel> getEdu(Context context) {
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
+    public static ArrayList<EducationModel> getEdu() {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
         String query = "SELECT EDU_ID, EDU_NAME, EDU_LOCATION, EDU_PART, EDU_START, EDU_END, EDU_TARGET, EDU_TYPE, EDU_UPLOADED, (SELECT COUNT(*) FROM ATTENDANCE WHERE ATTENDANCE.EDU_ID = EDUCATION.EDU_ID) AS COUNT FROM EDUCATION ORDER BY EDU_START DESC";
 
         Cursor cursor = db.rawQuery(query, null);
@@ -56,8 +55,8 @@ public class DBManager {
         return modelList;
     }
 
-    public static EducationModel getEdu(Context context, String eduId) {
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
+    public static EducationModel getEdu(String eduId) {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
         String query = makeQuery("SELECT EDU_ID, EDU_NAME, EDU_LOCATION, EDU_PART, EDU_START, EDU_END, EDU_TARGET, EDU_TYPE, EDU_UPLOADED, (SELECT COUNT(*) FROM ATTENDANCE WHERE ATTENDANCE.EDU_ID = EDUCATION.EDU_ID) AS COUNT FROM EDUCATION WHERE EDU_ID=?", new Object[]{eduId});
 
         Cursor cursor = db.rawQuery(query, null);
@@ -81,12 +80,18 @@ public class DBManager {
         return mEducationModelTmp;
     }
 
+    public static void deleteEdu(EducationModel educationModel) {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+        String query = makeQuery("DELETE FROM EDUCATION WHERE EDU_ID = ?", new Object[]{educationModel.getEduId()});
+        db.execSQL(query);
+    }
 
-    //경우의수 이미 출석이 완료 되었거나 or 출석 해당자가 아닐경우
-    public static boolean addAttendance(Context context, EducationModel eduModel, WorkerModel workerModel) {
+    public static boolean addAttendance(EducationModel eduModel, WorkerModel workerModel) {
 
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        long attendanceId = (eduModel.getEduId() + workerModel.getWorkerCard()).hashCode();
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+
+        long attendanceId = AttendanceModel.makeAttendanceId(eduModel, workerModel);
+
         String query = makeQuery("INSERT INTO ATTENDANCE (ATTENDANCE_ID, EDU_ID, WORKER_ID, WORKER_CARD, ATTENDANCE_TIME) VALUES (?,?,?,?,?)", new Object[]{attendanceId, eduModel.getEduId(), workerModel.getWorkerId(), workerModel.getWorkerCard(), System.currentTimeMillis()});
         try {
             db.execSQL(query);
@@ -96,10 +101,19 @@ public class DBManager {
         return true;
     }
 
-    public static ArrayList<AttendanceModel> getAttendance(Context context, EducationModel eduModel) {
+    public static void deleteAttendance(EducationModel eduModel, WorkerModel workerModel) {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
 
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = makeQuery("SELECT ATTENDANCE.ATTENDANCE_ID, ATTENDANCE.EDU_ID, ATTENDANCE.WORKER_ID, ATTENDANCE.WORKER_CARD, ATTENDANCE.ATTENDANCE_TIME, WORKER.WORKER_NAME FROM ATTENDANCE LEFT OUTER JOIN WORKER ON ATTENDANCE.WORKER_ID=WORKER.WORKER_ID WHERE EDU_ID=?", new Object[]{eduModel.getEduId()});
+        long attendanceId = AttendanceModel.makeAttendanceId(eduModel, workerModel);
+
+        String query = makeQuery("DELETE FROM ATTENDANCE WHERE ATTENDANCE_ID = ?", new Object[]{attendanceId});
+        db.execSQL(query);
+    }
+
+    public static ArrayList<AttendanceModel> getAttendance(EducationModel eduModel) {
+
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+        String query = makeQuery("SELECT ATTENDANCE.ATTENDANCE_ID, ATTENDANCE.WORKER_ID, ATTENDANCE.WORKER_CARD, ATTENDANCE.ATTENDANCE_TIME, WORKER.WORKER_NAME, WORKER.WORKER_PART, WORKER.WORKER_DIVISION FROM ATTENDANCE LEFT OUTER JOIN WORKER ON ATTENDANCE.WORKER_ID=WORKER.WORKER_ID WHERE EDU_ID=?", new Object[]{eduModel.getEduId()});
         Cursor cursor = db.rawQuery(query, null);
 
         ArrayList<AttendanceModel> modelList = new ArrayList<>();
@@ -108,11 +122,13 @@ public class DBManager {
             do {
                 AttendanceModel mAttAttendanceModel = new AttendanceModel();
                 mAttAttendanceModel.setAttendanceId(cursor.getInt(cursor.getColumnIndex("ATTENDANCE_ID")));
-                mAttAttendanceModel.setEduId(cursor.getString(cursor.getColumnIndex("EDU_ID")));
+                mAttAttendanceModel.setEduId(eduModel.getEduId());
                 mAttAttendanceModel.setWorkerId(cursor.getString(cursor.getColumnIndex("WORKER_ID")));
                 mAttAttendanceModel.setAttendanceTime(cursor.getLong(cursor.getColumnIndex("ATTENDANCE_TIME")));
                 mAttAttendanceModel.setWorkerCard(cursor.getLong(cursor.getColumnIndex("WORKER_CARD")));
                 mAttAttendanceModel.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
+                mAttAttendanceModel.setWorkerPart(cursor.getString(cursor.getColumnIndex("WORKER_PART")));
+                mAttAttendanceModel.setWorkerDivision(cursor.getString(cursor.getColumnIndex("WORKER_DIVISION")));
                 modelList.add(mAttAttendanceModel);
             } while (cursor.moveToNext());
         }
@@ -120,32 +136,28 @@ public class DBManager {
         return modelList;
     }
 
+    public static ArrayList<AttendanceModel> getAttendanceStatus(EducationModel eduModel, String workerName) {
 
-    public static void addWorker(Context context, WorkerModel workerModel) {
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = makeQuery("INSERT OR REPLACE INTO WORKER VALUES(?,?,?,?,?)", workerModel.toObjectArray());
-        db.execSQL(query);
-        query = makeQuery("UPDATE ATTENDANCE SET WORKER_ID = ? WHERE WORKER_CARD = ?", new Object[]{workerModel.getWorkerId(), workerModel.getWorkerCard()});
-        db.execSQL(query);
-    }
-
-    public static ArrayList<WorkerModel> getWorker(Context context) {
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = "SELECT WORKER_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_STATUS FROM WORKER";
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+        workerName = "%" + workerName + "%";
+        String query = makeQuery("SELECT WORKER.WORKER_ID, WORKER.WORKER_CARD, WORKER.WORKER_NAME, WORKER.WORKER_PART, WORKER.WORKER_DIVISION, ATTENDANCE.ATTENDANCE_ID, ATTENDANCE.ATTENDANCE_TIME FROM WORKER LEFT OUTER JOIN ATTENDANCE ON WORKER.WORKER_ID = ATTENDANCE.WORKER_ID AND ATTENDANCE.EDU_ID=? WHERE WORKER.WORKER_NAME LIKE ?", new Object[]{eduModel.getEduId(), workerName});
 
         Cursor cursor = db.rawQuery(query, null);
 
-        ArrayList<WorkerModel> modelList = new ArrayList<>();
+        ArrayList<AttendanceModel> modelList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
-                WorkerModel mWorkerModelTmp = new WorkerModel();
-                mWorkerModelTmp.setWorkerId(cursor.getString(cursor.getColumnIndex("WORKER_ID")));
-                mWorkerModelTmp.setWorkerPart(cursor.getString(cursor.getColumnIndex("WORKER_PART")));
-                mWorkerModelTmp.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
-                mWorkerModelTmp.setWorkerCard(cursor.getInt(cursor.getColumnIndex("WORKER_CARD")));
-                mWorkerModelTmp.setWorkerStatus(cursor.getInt(cursor.getColumnIndex("WORKER_STATUS")));
-                modelList.add(mWorkerModelTmp);
+                AttendanceModel mAttAttendanceModel = new AttendanceModel();
+                mAttAttendanceModel.setAttendanceId(cursor.getInt(cursor.getColumnIndex("ATTENDANCE_ID")));
+                mAttAttendanceModel.setEduId(eduModel.getEduId());
+                mAttAttendanceModel.setWorkerId(cursor.getString(cursor.getColumnIndex("WORKER_ID")));
+                mAttAttendanceModel.setAttendanceTime(cursor.getLong(cursor.getColumnIndex("ATTENDANCE_TIME")));
+                mAttAttendanceModel.setWorkerCard(cursor.getLong(cursor.getColumnIndex("WORKER_CARD")));
+                mAttAttendanceModel.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
+                mAttAttendanceModel.setWorkerPart(cursor.getString(cursor.getColumnIndex("WORKER_PART")));
+                mAttAttendanceModel.setWorkerDivision(cursor.getString(cursor.getColumnIndex("WORKER_DIVISION")));
+                modelList.add(mAttAttendanceModel);
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -153,9 +165,22 @@ public class DBManager {
         return modelList;
     }
 
-    public static WorkerModel getWorker(Context context, long workerCard) {
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
-        String query = makeQuery("SELECT WORKER_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_STATUS FROM WORKER WHERE WORKER_CARD = ?", new Object[]{workerCard});
+    public static void addWorker(WorkerModel workerModel) {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+        String query = makeQuery("INSERT OR REPLACE INTO WORKER VALUES(?,?,?,?,?,?)", workerModel.toObjectArray());
+        db.execSQL(query);
+        long attendanceId = workerModel.getWorkerId().hashCode() - workerModel.getWorkerCard();
+        query = makeQuery("UPDATE ATTENDANCE SET ATTENDANCE_ID = ATTENDANCE_ID + ?, WORKER_ID = ? WHERE WORKER_ID IS NULL AND WORKER_CARD = ?", new Object[]{attendanceId, workerModel.getWorkerId(), workerModel.getWorkerCard()});
+
+        Log.d("test", query);
+
+        db.execSQL(query);
+    }
+
+
+    public static WorkerModel getWorker(long workerCard) {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+        String query = makeQuery("SELECT WORKER_ID, WORKER_PART, WORKER_NAME, WORKER_CARD, WORKER_DIVISION, WORKER_STATUS FROM WORKER WHERE WORKER_CARD = ?", new Object[]{workerCard});
 
         Cursor cursor = db.rawQuery(query, null);
 
@@ -166,6 +191,7 @@ public class DBManager {
             mWorkerModelTmp.setWorkerPart(cursor.getString(cursor.getColumnIndex("WORKER_PART")));
             mWorkerModelTmp.setWorkerName(cursor.getString(cursor.getColumnIndex("WORKER_NAME")));
             mWorkerModelTmp.setWorkerCard(cursor.getInt(cursor.getColumnIndex("WORKER_CARD")));
+            mWorkerModelTmp.setWorkerDivision(cursor.getString(cursor.getColumnIndex("WORKER_DIVISION")));
             mWorkerModelTmp.setWorkerStatus(cursor.getInt(cursor.getColumnIndex("WORKER_STATUS")));
         }
         cursor.close();
@@ -173,9 +199,15 @@ public class DBManager {
         return mWorkerModelTmp;
     }
 
-    public static void resetWorker(Context context) {
-        SQLiteDatabase db = SQLiteManager.getInstance(context).getDataBase();
+    public static void resetWorker() {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
         String query = "DELETE FROM WORKER";
+        db.execSQL(query);
+    }
+
+    public static void uploadEducation(EducationModel eduModel) {
+        SQLiteDatabase db = SQLiteManager.getInstance().getDataBase();
+        String query = makeQuery("UPDATE EDUCATION SET EDU_UPLOADED = ? WHERE EDU_ID = ?", new Object[]{EducationModel.FLAG_EDUCATION_UPLOADED, eduModel.getEduId()});
         db.execSQL(query);
     }
 

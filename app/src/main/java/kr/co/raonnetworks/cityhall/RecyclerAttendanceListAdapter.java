@@ -1,7 +1,5 @@
 package kr.co.raonnetworks.cityhall;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,16 +18,14 @@ import kr.co.raonnetworks.cityhall.model.EducationModel;
  */
 public class RecyclerAttendanceListAdapter extends RecyclerView.Adapter<RecyclerAttendanceListAdapter.ViewHolder> {
 
-    private Context mContext;
     private EducationModel mEducationModel;
     private ArrayList<AttendanceModel> datas;
     private SimpleDateFormat format;
 
 
-    public RecyclerAttendanceListAdapter(Context mContext, EducationModel mEducationModel) {
-        this.mContext = mContext;
+    public RecyclerAttendanceListAdapter(EducationModel mEducationModel) {
         this.mEducationModel = mEducationModel;
-        this.datas = DBManager.getAttendance(mContext, mEducationModel);
+        this.datas = DBManager.getAttendance(mEducationModel);
         this.format = new SimpleDateFormat("HH:mm");
     }
 
@@ -67,7 +63,7 @@ public class RecyclerAttendanceListAdapter extends RecyclerView.Adapter<Recycler
     }
 
     public void notifyUpdate() {
-        this.datas = DBManager.getAttendance(mContext, mEducationModel);
+        this.datas = DBManager.getAttendance(mEducationModel);
         notifyDataSetChanged();
     }
 

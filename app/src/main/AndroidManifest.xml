@@ -38,11 +38,15 @@
             android:name=".EducationRegActivity"
             android:label="교육 등록" />
         <activity
+            android:name=".EducationSelfAttendanceActivity"
+            android:label="수기 등록" />
+
+        <activity
             android:name=".EducationDetailActivity"
             android:label="상세 교육 내역" />
         <activity
             android:name=".AttendanceCheckDialog"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert" />
+            android:theme="@style/AppTheme.Dialog.NoActionBar" />
     </application>
 
 </manifest>

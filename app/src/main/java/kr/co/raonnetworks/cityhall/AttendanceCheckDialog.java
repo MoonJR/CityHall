@@ -6,11 +6,8 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -26,15 +23,12 @@ import kr.co.raonnetworks.cityhall.model.WorkerModel;
 public class AttendanceCheckDialog extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
-    private ConfigManager mConfigManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_attendance_check);
 
-
-        mConfigManager = ConfigManager.getInstance(getContext());
 
         Tag mTag = getIntent().getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
@@ -50,7 +44,7 @@ public class AttendanceCheckDialog extends AppCompatActivity {
             findViewById(R.id.layoutFail).setVisibility(View.GONE);
             findViewById(R.id.layoutOK).setVisibility(View.VISIBLE);
             byte[] tagIdTmp = mTag.getId();
-            if (mConfigManager.isTagReverse()) {
+            if (ConfigManager.getInstance(getContext()).isTagReverse()) {
                 for (int i = 0; i < tagIdTmp.length / 2; i++) {
                     byte temp = tagIdTmp[i];
                     tagIdTmp[i] = tagIdTmp[tagIdTmp.length - i - 1];
@@ -61,7 +55,7 @@ public class AttendanceCheckDialog extends AppCompatActivity {
             long tagId = byteArrayToLong(tagIdTmp);
 
             EducationModel mEducationModel = EducationDetailActivity.getEducationModel();
-            WorkerModel mWorkerModel = DBManager.getWorker(getContext(), tagId);
+            WorkerModel mWorkerModel = DBManager.getWorker(tagId);
             if (mWorkerModel == null) {
                 mWorkerModel = new WorkerModel();
                 mWorkerModel.setWorkerCard(tagId);
@@ -75,7 +69,7 @@ public class AttendanceCheckDialog extends AppCompatActivity {
             }
             mTextViewPart.setText(mWorkerModel.getWorkerPart());
 
-            if (DBManager.addAttendance(getContext(), mEducationModel, mWorkerModel)) {
+            if (DBManager.addAttendance(mEducationModel, mWorkerModel)) {
                 mTextViewTitle.setText("카드 인식 완료.");
             } else {
                 mTextViewTitle.setText("이미 출석처리 되었습니다.");

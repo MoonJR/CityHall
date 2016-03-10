@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
@@ -18,6 +19,11 @@ import kr.co.raonnetworks.cityhall.model.WorkerModel;
  * Created by MoonJongRak on 2016. 2. 28..
  */
 public class SerialManager extends FT311UARTInterface {
+    private final String FLAG_CHUNK_MIDDLE = "[end]";
+    private final String FLAG_CHUNK_END = "[[end]]";
+
+
+    private static SerialManager manager;
 
     private OnSerialFinishedListener listener;
     private Context context;
@@ -27,22 +33,30 @@ public class SerialManager extends FT311UARTInterface {
     private byte[] readBuffer;
     private int[] actualNumBytes;
 
-    public SerialManager(Context context) {
+    public static SerialManager getInstance(Context context) {
+        if (manager == null) {
+            manager = new SerialManager(context);
+        }
+        return manager;
+    }
+
+    private SerialManager(Context context) {
         super(context, null);
+        this.writeBuffer = new byte[64];
+        this.readBuffer = new byte[4096];
+        this.actualNumBytes = new int[1];
+        this.timeout = 10000;
         this.context = context;
 
     }
 
     public void startSerial() {
-        this.writeBuffer = new byte[64];
-        this.readBuffer = new byte[4096];
-        this.actualNumBytes = new int[1];
-        this.timeout = 10000;
         this.ResumeAccessory();
     }
 
     public void stopSerial() {
         this.DestroyAccessory(false);
+        manager = null;
     }
 
     public void setOnSerialFinishedListener(OnSerialFinishedListener listener) {
@@ -58,14 +72,17 @@ public class SerialManager extends FT311UARTInterface {
     }
 
 
-    public void startWorkerUpadte(String startQuery, String endQuery) {
+    public void startWorkerUpdate(String startQuery, String endQuery) {
         new WorkerUpdateThread(startQuery, endQuery).start();
     }
 
-    public void startEducationUpLoad() {
-        new EducationUpLoadThread().start();
+    public void startEducationUpLoad(EducationModel mEducationModel) {
+        new EducationUpLoadThread(mEducationModel).start();
     }
 
+    public void startEducationsUpLoad() {
+        new EducationsUpLoadThread().start();
+    }
 
     private void writeData(String query) {
 
@@ -75,7 +92,6 @@ public class SerialManager extends FT311UARTInterface {
                 offset = query.length();
             }
             String queryTmp = query.substring(i, offset);
-            Log.d("moon", "test:" + queryTmp);
 
             int numBytes = queryTmp.length();
             for (int j = 0; j < numBytes; j++) {
@@ -114,6 +130,7 @@ public class SerialManager extends FT311UARTInterface {
     private void upDateWorker(String data) {
         String[] dataTmp = data.split("\r");
 
+        //직원코드=|부서명=|이름=|카드번호=|구분번호=|상태 + cr
         for (int i = 0; i < dataTmp.length; i++) {
             String[] dataTmp2 = dataTmp[i].split("=\\|");
             if (i == 0) {
@@ -138,12 +155,15 @@ public class SerialManager extends FT311UARTInterface {
                     mWorkerModelTmp.setWorkerCard(Long.parseLong(dataTmp2[3]));
                 }
 
-                if (dataTmp2[4].equals("y")) {
+
+                mWorkerModelTmp.setWorkerDivision(dataTmp2[4]);
+
+                if (dataTmp2[5].equals("y")) {
                     mWorkerModelTmp.setWorkerStatus(1);
                 } else {
                     mWorkerModelTmp.setWorkerStatus(0);
                 }
-                DBManager.addWorker(context, mWorkerModelTmp);
+                DBManager.addWorker(mWorkerModelTmp);
             }
         }
     }
@@ -195,12 +215,12 @@ public class SerialManager extends FT311UARTInterface {
     }
 
     private class EducationUpLoadThread extends Thread {
+        private EducationModel mEducationModel;
+        private SimpleDateFormat mSimpleDateFormat;
 
-
-        ArrayList<EducationModel> mEducationModels;
-
-        private EducationUpLoadThread() {
-            mEducationModels = DBManager.getEdu(context);
+        private EducationUpLoadThread(EducationModel mEducationModel) {
+            this.mSimpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            this.mEducationModel = mEducationModel;
         }
 
         @Override
@@ -215,28 +235,26 @@ public class SerialManager extends FT311UARTInterface {
                 });
             }
 
-            for (EducationModel mEducationModel : mEducationModels) {
-                ArrayList<AttendanceModel> mAttendanceModels = DBManager.getAttendance(context, mEducationModel);
+            ArrayList<AttendanceModel> mAttendanceModels = DBManager.getAttendance(mEducationModel);
 
-                StringBuilder builder = new StringBuilder();
-                builder.append(getEducationStartQuery(mEducationModel));
-                for (AttendanceModel mAttendanceModel : mAttendanceModels) {
-                    builder.append(getAttendanceQuery(mAttendanceModel));
-                }
-                builder.append(getEducationEndQuery(mEducationModel));
-                writeData(builder.toString());
-                try {
-                    readData();
-                } catch (final TimeoutException e) {
-                    e.printStackTrace();
-                    if (listener != null) {
-                        ((Activity) context).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                listener.onFinished(false, e);
-                            }
-                        });
-                    }
+            StringBuilder builder = new StringBuilder();
+            builder.append(getEducationStartQuery(mEducationModel));
+            for (AttendanceModel mAttendanceModel : mAttendanceModels) {
+                builder.append(getAttendanceQuery(mAttendanceModel));
+            }
+            builder.append(getEducationEndQuery(mEducationModel));
+            writeData(builder.toString());
+            try {
+                readData();
+            } catch (final TimeoutException e) {
+                e.printStackTrace();
+                if (listener != null) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onFinished(false, e);
+                        }
+                    });
                 }
             }
 
@@ -252,26 +270,113 @@ public class SerialManager extends FT311UARTInterface {
 
         private String getEducationStartQuery(EducationModel mEducationModel) {
             try {
-                return "2=|" + mEducationModel.getEduAttendanceCount() + "=|s=|" + URLEncoder.encode(mEducationModel.getEduName(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduLocation(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduPart(), "EUC-KR") + "=|" + mEducationModel.getEduStart().getTime() + "=|" + mEducationModel.getEduEnd().getTime() + "=|" + (mEducationModel.getEduEnd().getTime() - mEducationModel.getEduStart().getTime()) + "=|" + URLEncoder.encode(mEducationModel.getEduTargetString(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduType(), "EUC-KR") + "=|\r";
+                return "2=|" + mEducationModel.getEduAttendanceCount() + "=|s=|" + URLEncoder.encode(mEducationModel.getEduName(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduLocation(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduPart(), "EUC-KR") + "=|" + mSimpleDateFormat.format(mEducationModel.getEduStart()) + "=|" + mSimpleDateFormat.format(mEducationModel.getEduEnd()) + "=|" + URLEncoder.encode(mEducationModel.getEduTime(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduTargetString(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduType(), "EUC-KR") + "=|" + FLAG_CHUNK_MIDDLE;
             } catch (UnsupportedEncodingException e) {
                 return null;
             }
         }
 
         private String getEducationEndQuery(EducationModel mEducationModel) {
-            return "2=|" + mEducationModel.getEduAttendanceCount() + "=|e=|\r";
+            return "2=|" + mEducationModel.getEduAttendanceCount() + "=|e=|" + FLAG_CHUNK_END;
         }
 
         private String getAttendanceQuery(AttendanceModel mAttendanceModel) {
             if (mAttendanceModel.getWorkerId() != null) {
-                return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|\r";
+                return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
             } else {
-                return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|\r";
+                return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
             }
         }
 
 
     }
+
+    private class EducationsUpLoadThread extends Thread {
+
+
+        ArrayList<EducationModel> mEducationModels;
+
+        private EducationsUpLoadThread() {
+            mEducationModels = DBManager.getEdu();
+        }
+
+        @Override
+        public void run() {
+
+            if (listener != null) {
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onStart(true);
+                    }
+                });
+            }
+            for (int i = 0; i < mEducationModels.size(); i++) {
+                StringBuilder builder = new StringBuilder();
+                EducationModel mEducationModel = mEducationModels.get(i);
+                ArrayList<AttendanceModel> mAttendanceModels = DBManager.getAttendance(mEducationModel);
+
+                builder.append(getEducationStartQuery(mEducationModel));
+                for (AttendanceModel mAttendanceModel : mAttendanceModels) {
+                    builder.append(getAttendanceQuery(mAttendanceModel));
+                }
+                if (mEducationModels.size() - 1 <= i) {
+                    builder.append(getEducationEndQuery(mEducationModel, true));
+                } else {
+                    builder.append(getEducationEndQuery(mEducationModel, false));
+                }
+
+                writeData(builder.toString());
+            }
+
+            try {
+                readData();
+            } catch (final TimeoutException e) {
+                e.printStackTrace();
+                if (listener != null) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onFinished(false, e);
+                        }
+                    });
+                }
+            }
+
+            if (listener != null) {
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onFinished(true, null);
+                    }
+                });
+            }
+        }
+
+        private String getEducationStartQuery(EducationModel mEducationModel) {
+            try {
+                return "2=|" + mEducationModel.getEduAttendanceCount() + "=|s=|" + URLEncoder.encode(mEducationModel.getEduName(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduLocation(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduPart(), "EUC-KR") + "=|" + mEducationModel.getEduStart().getTime() + "=|" + mEducationModel.getEduEnd().getTime() + "=|" + (mEducationModel.getEduEnd().getTime() - mEducationModel.getEduStart().getTime()) + "=|" + URLEncoder.encode(mEducationModel.getEduTargetString(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduType(), "EUC-KR") + "=|" + FLAG_CHUNK_MIDDLE;
+            } catch (UnsupportedEncodingException e) {
+                return null;
+            }
+        }
+
+        private String getEducationEndQuery(EducationModel mEducationModel, boolean isEnd) {
+            String tmp = "2=|" + mEducationModel.getEduAttendanceCount() + "=|e=|";
+            return isEnd ? tmp + FLAG_CHUNK_END : tmp + FLAG_CHUNK_MIDDLE;
+        }
+
+        private String getAttendanceQuery(AttendanceModel mAttendanceModel) {
+            if (mAttendanceModel.getWorkerId() != null) {
+                return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|" + FLAG_CHUNK_MIDDLE;
+            } else {
+                return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|" + FLAG_CHUNK_MIDDLE;
+            }
+        }
+
+
+    }
+
 
     public interface OnSerialFinishedListener {
         void onFinished(boolean isSuccess, Exception e);

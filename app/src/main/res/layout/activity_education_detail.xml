@@ -64,39 +64,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingBottom="3dp"
-                android:paddingTop="5dp">
-
-                <TextView
-                    android:layout_width="70dp"
-                    android:layout_height="wrap_content"
-                    android:text="・ 직원DB"
-                    android:textColor="@color/colorText4"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text=":  "
-                    android:textColor="@color/colorText4"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/textViewDataName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="100"
-                    android:text="2016_의정부시청_csv"
-                    android:textColor="@color/colorText4"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="3dp"
                 android:paddingTop="3dp">
 
                 <TextView
@@ -283,15 +250,34 @@
     </LinearLayout>
 
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="26dp"
-        android:paddingTop="5dp"
-        android:text="출석 현황"
-        android:textSize="20dp"
-        android:textStyle="bold" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:text="출석 현황"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/buttonSelfAttendance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="수기참석"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -362,7 +348,18 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerViewAttendanceList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/textViewCardNotify"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:text="「카드를 태그하여 주십시오.」"
+            android:textColor="@color/colorCardNotify0"
+            android:textSize="15sp" />
 
 
     </LinearLayout>

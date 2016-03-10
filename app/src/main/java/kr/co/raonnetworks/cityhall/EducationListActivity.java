@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.libs.SerialManager;
 
@@ -22,9 +23,11 @@ import kr.co.raonnetworks.cityhall.libs.SerialManager;
  */
 public class EducationListActivity extends AppCompatActivity implements View.OnClickListener, SerialManager.OnSerialFinishedListener {
 
+
     private final int RESULT_CODE = 123;
     private RecyclerEducationListAdapter mRecyclerEducationListAdapter;
     private SerialManager mSerialManager;
+    private ConfigManager mConfigManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +39,15 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
         mRecyclerEducationListAdapter = new RecyclerEducationListAdapter(getContext());
         mRecyclerViewEducationList.setAdapter(mRecyclerEducationListAdapter);
 
-        findViewById(R.id.buttonUploadData).setOnClickListener(this);
         findViewById(R.id.buttonResetWorker).setOnClickListener(this);
         findViewById(R.id.buttonUpdateWork).setOnClickListener(this);
+        findViewById(R.id.buttonUploadEdu).setOnClickListener(this);
 
-        mSerialManager = new SerialManager(getContext());
-        mSerialManager.setOnSerialFinishedListener(this);
+        mSerialManager = SerialManager.getInstance(getContext());
         mSerialManager.setTimeout(5000);
         mSerialManager.startSerial();
+
+        mConfigManager = ConfigManager.getInstance(getContext());
 
     }
 
@@ -80,7 +84,7 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.buttonUpdateWork:
-                mSerialManager.startWorkerUpadte("1=|0=|s=|\r", "1=|0=|e=|\r");
+                mSerialManager.startWorkerUpdate("1=|" + mConfigManager.getTime() + "=|s=|\r", "1=|" + mConfigManager.getTime() + "=|e=|\r");
                 break;
             case R.id.buttonResetWorker:
                 new AlertDialog.Builder(getContext())
@@ -91,13 +95,24 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
                         .setPositiveButton("초기화", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                DBManager.resetWorker(getContext());
+                                DBManager.resetWorker();
+                                ConfigManager.getInstance(getContext()).setTime(0); //업데이트 시간 초기화
                                 Toast.makeText(getContext(), "직원 정보 초기화 완료!", Toast.LENGTH_LONG).show();
                             }
                         }).show();
                 break;
-            case R.id.buttonUploadData:
-                mSerialManager.startEducationUpLoad();
+            case R.id.buttonUploadEdu:
+                new AlertDialog.Builder(getContext())
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setTitle("알림")
+                        .setMessage("모든 교육정보를 업로드 합니다..\n업로드를 진행하시겠습니까?")
+                        .setNegativeButton("취소", null)
+                        .setPositiveButton("업로드", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mSerialManager.startEducationsUpLoad();
+                            }
+                        }).show();
                 break;
         }
     }
@@ -114,6 +129,7 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onResume() {
         super.onResume();
+        mSerialManager.setOnSerialFinishedListener(this);
         mRecyclerEducationListAdapter.notifyUpdate();
 
     }
@@ -146,7 +162,9 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onFinished(boolean isSuccess, Exception e) {
         dismissProgressDialogDataProcess();
-        if (!isSuccess) {
+        if (isSuccess) {
+            Toast.makeText(getContext(), "직원정보 업데이트 성공", Toast.LENGTH_LONG).show();
+        } else {
             Toast.makeText(getContext(), "서버 접속시간 초과.", Toast.LENGTH_LONG).show();
         }
     }
