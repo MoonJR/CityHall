@@ -34,7 +34,7 @@
             android:textSize="14sp" />
 
         <Button
-            android:id="@+id/buttonUploadData"
+            android:id="@+id/buttonUploadEdu"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
@@ -43,6 +43,8 @@
             android:text="@string/education_list_education_data_upload"
             android:textColor="@android:color/white"
             android:textSize="14sp" />
+
+
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

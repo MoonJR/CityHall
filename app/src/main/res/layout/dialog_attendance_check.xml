@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="25dp">
+    android:padding="30dp">
 
     <LinearLayout
         android:id="@+id/layoutOK"
@@ -17,24 +17,29 @@
             android:layout_height="wrap_content"
             android:text="인식 타이틀"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/dialogTextColor"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ㆍ성함 : " />
+                android:text="ㆍ성함 : "
+                android:textColor="@color/dialogTextColor" />
 
             <TextView
                 android:id="@+id/textViewName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="홍길동   " />
+                android:text="홍길동   "
+                android:textColor="@color/dialogTextColor" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,31 +49,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ㆍ직함 : " />
-
-            <TextView
-                android:id="@+id/textViewPosition"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="사무" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ㆍ부서 : " />
+                android:text="ㆍ부서 : "
+                android:textColor="@color/dialogTextColor" />
 
             <TextView
                 android:id="@+id/textViewPart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="행정국>기획과" />
+                android:text="행정국>기획과"
+                android:textColor="@color/dialogTextColor" />
 
         </LinearLayout>
 
@@ -85,7 +74,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/attendance_check_fail" />
+            android:text="@string/attendance_check_fail"
+            android:textColor="@color/dialogTextColor" />
     </LinearLayout>
 
 </LinearLayout>

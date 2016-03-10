@@ -20,7 +20,8 @@ import kr.co.raonnetworks.cityhall.libs.CheckableButton;
  * Created by MoonJongRak on 2016. 2. 17..
  */
 public class EducationModel implements Serializable {
-
+    public static final int FLAG_EDUCATION_NOT_UPLOADED = 0;
+    public static final int FLAG_EDUCATION_UPLOADED = 0;
 
     public static final String EDU_DATA_PATTERN = "yyyy/MM/dd HH:mm";
     public static final int[] EDU_TARGET = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01,};
@@ -233,7 +234,7 @@ public class EducationModel implements Serializable {
     }
 
     public Object[] toObjectArray() {
-        return new Object[]{eduId, eduName, eduLocation, eduPart, eduStart, eduEnd, eduTarget, eduType};
+        return new Object[]{eduId, eduName, eduLocation, eduPart, eduStart, eduEnd, eduTarget, eduType, FLAG_EDUCATION_NOT_UPLOADED};
     }
 
     public int getEduUploaded() {

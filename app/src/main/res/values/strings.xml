@@ -35,5 +35,7 @@
     <string name="education_reg_type_2">소양</string>
     <string name="education_reg_edu_reg">등록완료</string>
     <string name="attendance_check_fail">카드가 정확히 인식되지 않았습니다.\n다시 카드를 대주세요.</string>
+    <string name="education_detail_delete">삭제</string>
+    <string name="education_detail_upload">업로드</string>
 
 </resources>

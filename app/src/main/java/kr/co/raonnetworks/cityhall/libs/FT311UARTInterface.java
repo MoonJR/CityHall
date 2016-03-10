@@ -42,14 +42,12 @@ public class FT311UARTInterface {
     private byte[] usbdata;
     private byte[] writeusbdata;
     private byte[] readBuffer; /*circular buffer*/
-    private int readcount;
     private int totalBytes;
     private int writeIndex;
     private int readIndex;
     private byte status;
     final int maxnumbytes = 65536;
 
-    public boolean datareceived = false;
     public boolean READ_ENABLE = false;
     public boolean accessory_attached = false;
 
@@ -109,7 +107,7 @@ public class FT311UARTInterface {
         writeusbdata[7] = flowControl;
 
 		/*send the UART configuration packet*/
-        SendPacket((int) 8);
+        SendPacket(8);
     }
 
 
@@ -130,9 +128,7 @@ public class FT311UARTInterface {
         }
 
 		/*prepare the packet to be sent*/
-        for (int count = 0; count < numBytes; count++) {
-            writeusbdata[count] = buffer[count];
-        }
+        System.arraycopy(buffer, 0, writeusbdata, 0, numBytes);
 
         if (numBytes != 64) {
             SendPacket(numBytes);
@@ -206,19 +202,19 @@ public class FT311UARTInterface {
             return 2;
         }
 
-        UsbAccessory accessory = (accessories == null ? null : accessories[0]);
+        UsbAccessory accessory = (accessories[0]);
         if (accessory != null) {
-            if (-1 == accessory.toString().indexOf(ManufacturerString)) {
+            if (!accessory.toString().contains(ManufacturerString)) {
                 Toast.makeText(global_context, "Manufacturer is not matched!", Toast.LENGTH_SHORT).show();
                 return 1;
             }
 
-            if (-1 == accessory.toString().indexOf(ModelString1) && -1 == accessory.toString().indexOf(ModelString2)) {
+            if (!accessory.toString().contains(ModelString1) && !accessory.toString().contains(ModelString2)) {
                 Toast.makeText(global_context, "Model is not matched!", Toast.LENGTH_SHORT).show();
                 return 1;
             }
 
-            if (-1 == accessory.toString().indexOf(VersionString)) {
+            if (!accessory.toString().contains(VersionString)) {
                 Toast.makeText(global_context, "Version is not matched!", Toast.LENGTH_SHORT).show();
                 return 1;
             }
@@ -238,16 +234,14 @@ public class FT311UARTInterface {
                     }
                 }
             }
-        } else {
         }
-
         return 0;
     }
 
     /*destroy accessory*/
     public void DestroyAccessory(boolean bConfiged) {
 
-        if (true == bConfiged) {
+        if (bConfiged) {
             READ_ENABLE = false;  // set false condition for handler_thread to exit waiting data loop
             writeusbdata[0] = 0;  // send dummy data for instream.read going
             SendPacket(1);
@@ -255,20 +249,20 @@ public class FT311UARTInterface {
             SetConfig(9600, (byte) 1, (byte) 8, (byte) 0, (byte) 0);  // send default setting data for config
             try {
                 Thread.sleep(10);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             READ_ENABLE = false;  // set false condition for handler_thread to exit waiting data loop
             writeusbdata[0] = 0;  // send dummy data for instream.read going
             SendPacket(1);
-            if (true == accessory_attached) {
+            if (accessory_attached) {
                 saveDefaultPreference();
             }
         }
 
         try {
             Thread.sleep(10);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         CloseAccessory();
     }
@@ -286,13 +280,13 @@ public class FT311UARTInterface {
 
             inputstream = new FileInputStream(fd);
             outputstream = new FileOutputStream(fd);
-			/*check if any of them are null*/
-            if (inputstream == null || outputstream == null) {
+            /*check if any of them are null*/
+            if (inputstream == null) {
                 return;
             }
             SetConfig(FT311UARTInterface.BAUD, FT311UARTInterface.DATA_BITS, FT311UARTInterface.STOP_BITS, FT311UARTInterface.PARITY, FT311UARTInterface.FLOW_CONTROL);
 
-            if (READ_ENABLE == false) {
+            if (!READ_ENABLE) {
                 READ_ENABLE = true;
                 readThread = new read_thread(inputstream);
                 readThread.start();
@@ -305,22 +299,22 @@ public class FT311UARTInterface {
             if (filedescriptor != null)
                 filedescriptor.close();
 
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         try {
             if (inputstream != null)
                 inputstream.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
 
         try {
             if (outputstream != null)
                 outputstream.close();
 
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
-		/*FIXME, add the notfication also to close the application*/
+        /*FIXME, add the notfication also to close the application*/
 
         filedescriptor = null;
         inputstream = null;
@@ -331,18 +325,19 @@ public class FT311UARTInterface {
         if (intsharePrefSettings != null) {
             intsharePrefSettings.edit()
                     .putString("configed", "FALSE")
-                    .commit();
+                    .apply();
         }
     }
 
     protected void saveDefaultPreference() {
         if (intsharePrefSettings != null) {
-            intsharePrefSettings.edit().putString("configed", "TRUE").commit();
-            intsharePrefSettings.edit().putInt("baudRate", 9600).commit();
-            intsharePrefSettings.edit().putInt("stopBit", 1).commit();
-            intsharePrefSettings.edit().putInt("dataBit", 8).commit();
-            intsharePrefSettings.edit().putInt("parity", 0).commit();
-            intsharePrefSettings.edit().putInt("flowControl", 0).commit();
+            intsharePrefSettings.edit()
+                    .putString("configed", "TRUE")
+                    .putInt("baudRate", 9600)
+                    .putInt("stopBit", 1)
+                    .putInt("dataBit", 8)
+                    .putInt("parity", 0)
+                    .putInt("flowControl", 0).apply();
         }
     }
 
@@ -355,7 +350,7 @@ public class FT311UARTInterface {
             String action = intent.getAction();
             if (ACTION_USB_PERMISSION.equals(action)) {
                 synchronized (this) {
-                    UsbAccessory accessory = (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
+                    UsbAccessory accessory = intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         Toast.makeText(global_context, "Allow USB Permission", Toast.LENGTH_SHORT).show();
                         OpenAccessory(accessory);
@@ -396,7 +391,7 @@ public class FT311UARTInterface {
 
                 try {
                     if (instream != null) {
-                        readcount = instream.read(usbdata, 0, 1024);
+                        int readcount = instream.read(usbdata, 0, 1024);
                         if (readcount > 0) {
                             for (int count = 0; count < readcount; count++) {
                                 readBuffer[writeIndex] = usbdata[count];

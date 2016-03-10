@@ -1,8 +1,6 @@
 package kr.co.raonnetworks.cityhall.libs;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import kr.co.raonnetworks.cityhall.R;
+import kr.co.raonnetworks.cityhall.CityHallApplication;
 
 /**
  * Created by MoonJongRak on 2016. 2. 22..
@@ -27,9 +25,13 @@ public class ConfigManager {
     public static String CONFIG_FILE_NAME = "config.json";
     public static String LOGO_FILE_NAME = "logo.png";
 
+    public static File CONFIG_FILE = new File(CityHallApplication.APP_DIR, CONFIG_FILE_NAME);
+    public static File LOGO_FILE = new File(CityHallApplication.APP_DIR, LOGO_FILE_NAME);
+
     private static ConfigManager instance;
     private Context mContext;
 
+    private SimpleDateFormat format;
     private String loginTitle;
     private String cityTitle;
     private String id;
@@ -43,12 +45,13 @@ public class ConfigManager {
 
     private ConfigManager(Context mContext) throws JSONException, IOException {
         this.mContext = mContext;
-        JSONObject mJsonObject = new JSONObject(getJsonString(mContext));
+        JSONObject mJsonObject = new JSONObject(getJsonString());
         this.loginTitle = mJsonObject.getString("loginTitle");
         this.cityTitle = mJsonObject.getString("cityTitle");
         this.id = mJsonObject.getString("id");
         this.passwd = mJsonObject.getString("passwd");
         this.isTagReverse = mJsonObject.getBoolean("isTagReverse");
+        this.format = new SimpleDateFormat("yyyyMMddHHmmss");
 
         //시간 설정
         long time = mContext.getSharedPreferences("CONFIG", Context.MODE_PRIVATE).getLong("time", System.currentTimeMillis());
@@ -76,7 +79,6 @@ public class ConfigManager {
     }
 
     public void setTime(String time) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         try {
             mContext.getSharedPreferences("CONFIG", Context.MODE_PRIVATE).edit().putLong("time", format.parse(time).getTime()).apply();
         } catch (ParseException e) {
@@ -84,8 +86,12 @@ public class ConfigManager {
         }
     }
 
-    private String getJsonString(Context mContext) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(mContext.getExternalFilesDir(null), CONFIG_FILE_NAME))));
+    public void setTime(long time) {
+        mContext.getSharedPreferences("CONFIG", Context.MODE_PRIVATE).edit().putLong("time", time).apply();
+    }
+
+    private String getJsonString() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(CONFIG_FILE)));
         String tmp;
         StringBuilder buffer = new StringBuilder();
         if ((tmp = reader.readLine()) != null) {
@@ -122,6 +128,16 @@ public class ConfigManager {
     public int getMinute() {
         return minute;
     }
+
+    public String getTime() {
+        long time = this.mContext.getSharedPreferences("CONFIG", Context.MODE_PRIVATE).getLong("time", 0);
+        if (time == 0) {
+            return "0";
+        } else {
+            return format.format(time);
+        }
+    }
+
 
     public boolean isTagReverse() {
         return isTagReverse;

@@ -1,10 +1,14 @@
 package kr.co.raonnetworks.cityhall;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -20,24 +24,24 @@ import kr.co.raonnetworks.cityhall.model.EducationModel;
 /**
  * Created by MoonJongRak on 2016. 2. 17..
  */
-public class EducationRegActivity extends AppCompatActivity implements View.OnClickListener, View.OnFocusChangeListener {
+public class EducationRegActivity extends ActionBarActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
-    ConfigManager mConfigManager;
+    private ConfigManager mConfigManager;
 
-    int[] mButtonTargetIds = {R.id.buttonTarget0, R.id.buttonTarget1, R.id.buttonTarget2
+    private int[] mButtonTargetIds = {R.id.buttonTarget0, R.id.buttonTarget1, R.id.buttonTarget2
             , R.id.buttonTarget3, R.id.buttonTarget4, R.id.buttonTarget5, R.id.buttonTarget6
             , R.id.buttonTarget7,};
-    int[] mEditTextIds = {R.id.editTextEduName, R.id.editTextEduLocation, R.id.editTextEduPart, R.id.editTextEduTime, R.id.editTextEduStart, R.id.editTextEduEnd,};
+    private int[] mEditTextIds = {R.id.editTextEduName, R.id.editTextEduLocation, R.id.editTextEduPart, R.id.editTextEduTime, R.id.editTextEduStart, R.id.editTextEduEnd,};
 
 
-    CheckableButton[] mCheckableButtonTargets = new CheckableButton[mButtonTargetIds.length];
+    private CheckableButton[] mCheckableButtonTargets = new CheckableButton[mButtonTargetIds.length];
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_reg);
-
+        setActionBar();
         mConfigManager = ConfigManager.getInstance(getContext());
 
         findViewById(R.id.buttonReg).setOnClickListener(this);
@@ -50,8 +54,22 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
             findViewById(id).setOnFocusChangeListener(this);
             findViewById(id).setOnClickListener(this);
         }
+    }
 
+    private void setActionBar() {
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException ignore) {
 
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -78,7 +96,7 @@ public class EducationRegActivity extends AppCompatActivity implements View.OnCl
                     return;
                 }
 
-                DBManager.addEdu(this, mEducationModel);
+                DBManager.addEdu(mEducationModel);
                 setResult(RESULT_OK);
                 finish();
                 break;

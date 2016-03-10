@@ -11,6 +11,7 @@ public class WorkerModel {
     private String workerId;
     private String workerName;
     private String workerPart;
+    private String workerDivision;
     private long workerCard;
     private int workerStatus;
 
@@ -63,16 +64,20 @@ public class WorkerModel {
         tmp.put("workerPart", this.workerPart);
         tmp.put("workerCard", Long.toString(this.workerCard));
         tmp.put("workerStatus", Integer.toString(this.workerStatus));
+        tmp.put("workerDivision", this.workerDivision);
         return tmp.toString();
     }
 
     public Object[] toObjectArray() {
-        Object[] tmp = new Object[5];
-        tmp[0] = this.workerId;
-        tmp[1] = this.workerPart;
-        tmp[2] = this.workerName;
-        tmp[3] = this.workerCard;
-        tmp[4] = this.workerStatus;
-        return tmp;
+        return new Object[]{this.workerId, this.workerPart, this.workerName, this.workerCard, this.workerDivision,
+                this.workerStatus};
+    }
+
+    public String getWorkerDivision() {
+        return workerDivision;
+    }
+
+    public void setWorkerDivision(String workerDivision) {
+        this.workerDivision = workerDivision;
     }
 }

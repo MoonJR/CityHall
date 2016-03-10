@@ -17,10 +17,16 @@
     <color name="colorRBSelected">#00a1be</color>
     <color name="colorRBUnselected">#ffffff</color>
 
+    <!--activity_education_detail-->
+    <color name="colorCardNotify0">#00a1be</color>
+    <color name="colorCardNotify1">#969696</color>
+
     <!--adapter_education_list-->
     <color name="colorText3">#c3c3c3</color>
     <color name="colorText4">#7d7d7d</color>
 
+    <!--dialog_education_list-->
+    <color name="dialogTextColor">#5e5e5e</color>
 
 
 </resources>
