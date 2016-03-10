@@ -26,26 +26,26 @@
 
         </activity>
 
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".activity.LoginActivity" />
         <activity
-            android:name=".EducationListActivity"
+            android:name=".activity.EducationListActivity"
             android:label="의정부시청 교육 내역">
             <meta-data
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
                 android:resource="@xml/accessory_filter" />
         </activity>
         <activity
-            android:name=".EducationRegActivity"
+            android:name=".activity.EducationRegActivity"
             android:label="교육 등록" />
         <activity
-            android:name=".EducationSelfAttendanceActivity"
+            android:name=".activity.EducationSelfAttendanceActivity"
             android:label="수기 등록" />
 
         <activity
-            android:name=".EducationDetailActivity"
+            android:name=".activity.EducationDetailActivity"
             android:label="상세 교육 내역" />
         <activity
-            android:name=".AttendanceCheckDialog"
+            android:name=".dialog.AttendanceCheckDialog"
             android:theme="@style/AppTheme.Dialog.NoActionBar" />
     </application>
 

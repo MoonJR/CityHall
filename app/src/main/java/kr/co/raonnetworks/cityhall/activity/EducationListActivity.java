@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import kr.co.raonnetworks.cityhall.R;
+import kr.co.raonnetworks.cityhall.adapter.RecyclerEducationListAdapter;
 import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.libs.SerialManager;

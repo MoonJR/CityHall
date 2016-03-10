@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import kr.co.raonnetworks.cityhall.R;
+import kr.co.raonnetworks.cityhall.activity.EducationDetailActivity;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
 

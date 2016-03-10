@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.activity;
 
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -23,6 +23,9 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import kr.co.raonnetworks.cityhall.dialog.AttendanceCheckDialog;
+import kr.co.raonnetworks.cityhall.R;
+import kr.co.raonnetworks.cityhall.adapter.RecyclerAttendanceListAdapter;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.libs.SerialManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;

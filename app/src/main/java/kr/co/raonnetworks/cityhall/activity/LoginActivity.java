@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
-
+import kr.co.raonnetworks.cityhall.R;
 import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {

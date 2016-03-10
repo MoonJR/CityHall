@@ -1,7 +1,6 @@
 package kr.co.raonnetworks.cityhall.test;
 
-import kr.co.raonnetworks.cityhall.EducationSelfAttendanceActivity;
-import kr.co.raonnetworks.cityhall.LoginActivity;
+import kr.co.raonnetworks.cityhall.activity.EducationSelfAttendanceActivity;
 
 /**
  * Created by MoonJongRak on 2016. 2. 17..

@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.dialog;
 
 import android.content.Context;
 import android.nfc.NfcAdapter;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import kr.co.raonnetworks.cityhall.R;
+import kr.co.raonnetworks.cityhall.activity.EducationDetailActivity;
 import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;

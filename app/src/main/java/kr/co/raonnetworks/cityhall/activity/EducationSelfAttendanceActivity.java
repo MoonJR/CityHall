@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.activity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
+
+import kr.co.raonnetworks.cityhall.R;
+import kr.co.raonnetworks.cityhall.adapter.RecyclerSelfAttendanceListAdapter;
 
 /**
  * Created by MoonJongRak on 2016. 3. 8..

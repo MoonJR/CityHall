@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="17dp"
     android:weightSum="1"
-    tools:context="kr.co.raonnetworks.cityhall.LoginActivity">
+    tools:context=".activity.LoginActivity">
 
     <ImageView
         android:id="@+id/imageViewLogo"

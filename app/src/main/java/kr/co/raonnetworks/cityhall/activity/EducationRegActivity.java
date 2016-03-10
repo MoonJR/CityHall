@@ -1,4 +1,4 @@
-package kr.co.raonnetworks.cityhall;
+package kr.co.raonnetworks.cityhall.activity;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TimePicker;
 
+import kr.co.raonnetworks.cityhall.R;
 import kr.co.raonnetworks.cityhall.libs.CheckableButton;
 import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
