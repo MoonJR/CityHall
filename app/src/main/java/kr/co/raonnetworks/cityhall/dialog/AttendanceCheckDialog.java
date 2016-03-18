@@ -54,7 +54,7 @@ public class AttendanceCheckDialog extends AppCompatActivity {
                 }
             }
 
-            long tagId = byteArrayToLong(tagIdTmp);
+            String tagId = longToDec(byteArrayToLong(tagIdTmp));
 
             EducationModel mEducationModel = EducationDetailActivity.getEducationModel();
             WorkerModel mWorkerModel = DBManager.getWorker(tagId);
@@ -115,6 +115,18 @@ public class AttendanceCheckDialog extends AppCompatActivity {
         ByteBuffer byte_buf = ByteBuffer.wrap(change);
         byte_buf.order(ByteOrder.BIG_ENDIAN);
         return byte_buf.getLong();
+    }
+
+    public static String longToDec(long id) {
+        String tmp = Long.toString(id);
+        for (; ; ) {
+            if (tmp.length() < 10) {
+                tmp = "0" + tmp;
+            } else {
+                break;
+            }
+        }
+        return tmp;
     }
 
     private Context getContext() {

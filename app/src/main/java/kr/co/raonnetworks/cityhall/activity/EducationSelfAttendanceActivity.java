@@ -22,6 +22,7 @@ public class EducationSelfAttendanceActivity extends AppCompatActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_self_attendance);
+        setTitle(EducationDetailActivity.getEducationModel().getEduName());
 
         RecyclerView mRecyclerViewSelfAttendance = (RecyclerView) findViewById(R.id.recyclerViewSelfAttendanceList);
         mRecyclerViewSelfAttendance.setLayoutManager(new LinearLayoutManager(getContext()));

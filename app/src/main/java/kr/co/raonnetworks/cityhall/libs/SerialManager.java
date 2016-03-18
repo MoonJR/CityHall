@@ -149,19 +149,14 @@ public class SerialManager extends FT311UARTInterface {
                 mWorkerModelTmp.setWorkerId(dataTmp2[0]);
                 mWorkerModelTmp.setWorkerPart(dataTmp2[1]);
                 mWorkerModelTmp.setWorkerName(dataTmp2[2]);
-                if (dataTmp2[3].equals("-")) {
-                    mWorkerModelTmp.setWorkerCard(-1);
-                } else {
-                    mWorkerModelTmp.setWorkerCard(Long.parseLong(dataTmp2[3]));
-                }
-
+                mWorkerModelTmp.setWorkerCard(dataTmp2[3]);
 
                 mWorkerModelTmp.setWorkerDivision(dataTmp2[4]);
 
-                if (dataTmp2[5].equals("y")) {
-                    mWorkerModelTmp.setWorkerStatus(1);
+                if (dataTmp2[5].equalsIgnoreCase("n")) {
+                    mWorkerModelTmp.setWorkerStatus(WorkerModel.FLAG_NOT_ACTIVE_WORKER);
                 } else {
-                    mWorkerModelTmp.setWorkerStatus(0);
+                    mWorkerModelTmp.setWorkerStatus(WorkerModel.FLAG_ACTIVE_WORKER);
                 }
                 DBManager.addWorker(mWorkerModelTmp);
             }
@@ -191,25 +186,25 @@ public class SerialManager extends FT311UARTInterface {
             try {
                 String updateData = readData();
                 upDateWorker(updateData);
+                if (listener != null) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onFinished(true, false, null);
+                        }
+                    });
+                }
             } catch (final TimeoutException e) {
                 if (listener != null) {
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onFinished(false, e);
+                            listener.onFinished(false, false, e);
                         }
                     });
                 }
             }
             writeData(endQuery);
-            if (listener != null) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onFinished(true, null);
-                    }
-                });
-            }
         }
 
     }
@@ -246,25 +241,24 @@ public class SerialManager extends FT311UARTInterface {
             writeData(builder.toString());
             try {
                 readData();
+                if (listener != null) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onFinished(true, true, null);
+                        }
+                    });
+                }
             } catch (final TimeoutException e) {
                 e.printStackTrace();
                 if (listener != null) {
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onFinished(false, e);
+                            listener.onFinished(false, true, e);
                         }
                     });
                 }
-            }
-
-            if (listener != null) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onFinished(true, null);
-                    }
-                });
             }
         }
 
@@ -282,7 +276,12 @@ public class SerialManager extends FT311UARTInterface {
 
         private String getAttendanceQuery(AttendanceModel mAttendanceModel) {
             if (mAttendanceModel.getWorkerId() != null) {
-                return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
+                if (mAttendanceModel.getWorkerCard() != null) {
+                    return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
+                } else {
+                    return "name=|" + mAttendanceModel.getWorkerId() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
+                }
+
             } else {
                 return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
             }
@@ -294,10 +293,13 @@ public class SerialManager extends FT311UARTInterface {
     private class EducationsUpLoadThread extends Thread {
 
 
-        ArrayList<EducationModel> mEducationModels;
+        private ArrayList<EducationModel> mEducationModels;
+        private SimpleDateFormat mSimpleDateFormat;
+
 
         private EducationsUpLoadThread() {
-            mEducationModels = DBManager.getEdu();
+            this.mSimpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+            this.mEducationModels = DBManager.getEduForUpload();
         }
 
         @Override
@@ -311,8 +313,19 @@ public class SerialManager extends FT311UARTInterface {
                     }
                 });
             }
+
+            if (mEducationModels.size() == 0) {
+                ((Activity) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onFinished(false, true, new DBManager.CityHallDBException(DBManager.CityHallDBException.FLAG_NO_UPLOAD_DATA));
+                    }
+                });
+                return;
+            }
+            StringBuilder builder = new StringBuilder();
+
             for (int i = 0; i < mEducationModels.size(); i++) {
-                StringBuilder builder = new StringBuilder();
                 EducationModel mEducationModel = mEducationModels.get(i);
                 ArrayList<AttendanceModel> mAttendanceModels = DBManager.getAttendance(mEducationModel);
 
@@ -326,36 +339,38 @@ public class SerialManager extends FT311UARTInterface {
                     builder.append(getEducationEndQuery(mEducationModel, false));
                 }
 
+                Log.d("test", builder.toString());
                 writeData(builder.toString());
             }
 
             try {
                 readData();
+                if (listener != null) {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onFinished(true, true, null);
+                        }
+                    });
+                }
             } catch (final TimeoutException e) {
                 e.printStackTrace();
                 if (listener != null) {
                     ((Activity) context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onFinished(false, e);
+                            listener.onFinished(false, true, e);
                         }
                     });
                 }
             }
 
-            if (listener != null) {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        listener.onFinished(true, null);
-                    }
-                });
-            }
         }
+
 
         private String getEducationStartQuery(EducationModel mEducationModel) {
             try {
-                return "2=|" + mEducationModel.getEduAttendanceCount() + "=|s=|" + URLEncoder.encode(mEducationModel.getEduName(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduLocation(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduPart(), "EUC-KR") + "=|" + mEducationModel.getEduStart().getTime() + "=|" + mEducationModel.getEduEnd().getTime() + "=|" + (mEducationModel.getEduEnd().getTime() - mEducationModel.getEduStart().getTime()) + "=|" + URLEncoder.encode(mEducationModel.getEduTargetString(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduType(), "EUC-KR") + "=|" + FLAG_CHUNK_MIDDLE;
+                return "2=|" + mEducationModel.getEduAttendanceCount() + "=|s=|" + URLEncoder.encode(mEducationModel.getEduName(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduLocation(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduPart(), "EUC-KR") + "=|" + mSimpleDateFormat.format(mEducationModel.getEduStart()) + "=|" + mSimpleDateFormat.format(mEducationModel.getEduEnd()) + "=|" + URLEncoder.encode(mEducationModel.getEduTime(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduTargetString(), "EUC-KR") + "=|" + URLEncoder.encode(mEducationModel.getEduType(), "EUC-KR") + "=|" + FLAG_CHUNK_MIDDLE;
             } catch (UnsupportedEncodingException e) {
                 return null;
             }
@@ -366,11 +381,16 @@ public class SerialManager extends FT311UARTInterface {
             return isEnd ? tmp + FLAG_CHUNK_END : tmp + FLAG_CHUNK_MIDDLE;
         }
 
+
         private String getAttendanceQuery(AttendanceModel mAttendanceModel) {
             if (mAttendanceModel.getWorkerId() != null) {
-                return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|" + FLAG_CHUNK_MIDDLE;
+                if (mAttendanceModel.getWorkerCard() != null) {
+                    return "mem=|" + mAttendanceModel.getWorkerId() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
+                } else {
+                    return "name=|" + mAttendanceModel.getWorkerId() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
+                }
             } else {
-                return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mAttendanceModel.getAttendanceTime().getTime() + "=|" + FLAG_CHUNK_MIDDLE;
+                return "card=|" + mAttendanceModel.getWorkerCard() + "=|" + mSimpleDateFormat.format(mAttendanceModel.getAttendanceTime()) + "=|" + FLAG_CHUNK_MIDDLE;
             }
         }
 
@@ -379,10 +399,9 @@ public class SerialManager extends FT311UARTInterface {
 
 
     public interface OnSerialFinishedListener {
-        void onFinished(boolean isSuccess, Exception e);
+        void onFinished(boolean isSuccess, boolean isDataSend, Exception e);
 
         void onStart(boolean isDataSend);
-
     }
 }
 

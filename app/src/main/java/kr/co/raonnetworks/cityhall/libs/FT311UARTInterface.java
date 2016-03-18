@@ -81,6 +81,7 @@ public class FT311UARTInterface {
         mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
+        filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
         context.registerReceiver(mUsbReceiver, filter);
 
         inputstream = null;
@@ -205,21 +206,21 @@ public class FT311UARTInterface {
         UsbAccessory accessory = (accessories[0]);
         if (accessory != null) {
             if (!accessory.toString().contains(ManufacturerString)) {
-                Toast.makeText(global_context, "Manufacturer is not matched!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(global_context, "지원하지 않는 악세서리 입니다!", Toast.LENGTH_SHORT).show();
                 return 1;
             }
 
             if (!accessory.toString().contains(ModelString1) && !accessory.toString().contains(ModelString2)) {
-                Toast.makeText(global_context, "Model is not matched!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(global_context, "지원하지 않는 모델입니다!", Toast.LENGTH_SHORT).show();
                 return 1;
             }
 
             if (!accessory.toString().contains(VersionString)) {
-                Toast.makeText(global_context, "Version is not matched!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(global_context, "지원하지 않는 버전입니다!", Toast.LENGTH_SHORT).show();
                 return 1;
             }
 
-            Toast.makeText(global_context, "Manufacturer, Model & Version are matched!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(global_context, "Usb 통신 연결 중...!", Toast.LENGTH_SHORT).show();
             accessory_attached = true;
 
             if (usbmanager.hasPermission(accessory)) {
@@ -227,7 +228,7 @@ public class FT311UARTInterface {
             } else {
                 synchronized (mUsbReceiver) {
                     if (!mPermissionRequestPending) {
-                        Toast.makeText(global_context, "Request USB Permission", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(global_context, "Usb 통신 권한을 요청하는 중...!", Toast.LENGTH_SHORT).show();
                         usbmanager.requestPermission(accessory,
                                 mPermissionIntent);
                         mPermissionRequestPending = true;
@@ -291,6 +292,9 @@ public class FT311UARTInterface {
                 readThread = new read_thread(inputstream);
                 readThread.start();
             }
+            Toast.makeText(global_context, "Usb 통신 연결 성공!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(global_context, "Usb 통신 연결 실패!\n다시 연결해 주세요.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -352,11 +356,10 @@ public class FT311UARTInterface {
                 synchronized (this) {
                     UsbAccessory accessory = intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
-                        Toast.makeText(global_context, "Allow USB Permission", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(global_context, "Usb 통신 권한을 얻었습니다.", Toast.LENGTH_SHORT).show();
                         OpenAccessory(accessory);
                     } else {
-                        Toast.makeText(global_context, "Deny USB Permission", Toast.LENGTH_SHORT).show();
-                        Log.d("LED", "permission denied for accessory " + accessory);
+                        Toast.makeText(global_context, "Usb 통신 권한을 얻지 못했습니다.", Toast.LENGTH_SHORT).show();
 
                     }
                     mPermissionRequestPending = false;

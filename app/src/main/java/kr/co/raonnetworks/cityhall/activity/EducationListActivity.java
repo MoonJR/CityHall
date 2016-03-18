@@ -26,7 +26,7 @@ import kr.co.raonnetworks.cityhall.libs.SerialManager;
 public class EducationListActivity extends AppCompatActivity implements View.OnClickListener, SerialManager.OnSerialFinishedListener {
 
 
-    private final int RESULT_CODE = 123;
+    public static final int RESULT_CODE = 123;
     private RecyclerEducationListAdapter mRecyclerEducationListAdapter;
     private SerialManager mSerialManager;
     private ConfigManager mConfigManager;
@@ -35,6 +35,12 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_list);
+        mConfigManager = ConfigManager.getInstance(getContext());
+
+        if (mConfigManager.getCityTitle() != null) {
+            setTitle(mConfigManager.getCityTitle());
+        }
+
 
         RecyclerView mRecyclerViewEducationList = (RecyclerView) findViewById(R.id.recyclerViewEducationList);
         mRecyclerViewEducationList.setLayoutManager(new LinearLayoutManager(this));
@@ -49,7 +55,6 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
         mSerialManager.setTimeout(5000);
         mSerialManager.startSerial();
 
-        mConfigManager = ConfigManager.getInstance(getContext());
 
     }
 
@@ -75,7 +80,7 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
 
         if (resultCode == RESULT_OK) {
             if (requestCode == RESULT_CODE) {
-                mRecyclerEducationListAdapter.notifyUpdate();
+                refreshData();
             }
         }
 
@@ -107,7 +112,7 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
                 new AlertDialog.Builder(getContext())
                         .setIcon(R.mipmap.ic_launcher)
                         .setTitle("알림")
-                        .setMessage("모든 교육정보를 업로드 합니다..\n업로드를 진행하시겠습니까?")
+                        .setMessage("모든 교육정보를 업로드 합니다.\n업로드를 진행하시겠습니까?")
                         .setNegativeButton("취소", null)
                         .setPositiveButton("업로드", new DialogInterface.OnClickListener() {
                             @Override
@@ -131,9 +136,9 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onResume() {
         super.onResume();
+        mSerialManager = SerialManager.getInstance(getContext());
         mSerialManager.setOnSerialFinishedListener(this);
-        mRecyclerEducationListAdapter.notifyUpdate();
-
+        refreshData();
     }
 
 
@@ -162,12 +167,27 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
 
 
     @Override
-    public void onFinished(boolean isSuccess, Exception e) {
+    public void onFinished(boolean isSuccess, boolean isDataSend, Exception e) {
         dismissProgressDialogDataProcess();
         if (isSuccess) {
-            Toast.makeText(getContext(), "직원정보 업데이트 성공", Toast.LENGTH_LONG).show();
+            if (isDataSend) {
+                DBManager.uploadEducation();
+                refreshData();
+                Toast.makeText(getContext(), "교육정보 업로드 성공.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "직원정보 업데이트 성공", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(getContext(), "서버 접속시간 초과.", Toast.LENGTH_LONG).show();
+            if (e instanceof DBManager.CityHallDBException) {
+                if (((DBManager.CityHallDBException) e).getFlag() == DBManager.CityHallDBException.FLAG_NO_UPLOAD_DATA) {
+                    Toast.makeText(getContext(), "이미 업로드가 완료되었습니다.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "디비 쿼리 오류.", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getContext(), "서버 접속시간 초과.", Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 
@@ -180,6 +200,15 @@ public class EducationListActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onStart(boolean isDataSend) {
         showProgressDialogDataProcess(isDataSend);
+    }
+
+    private void refreshData() {
+        mRecyclerEducationListAdapter.notifyUpdate();
+        if (DBManager.haveNewAttendanceList()) {
+            findViewById(R.id.buttonNewAttendanceEducation).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.buttonNewAttendanceEducation).setVisibility(View.INVISIBLE);
+        }
     }
 }
 

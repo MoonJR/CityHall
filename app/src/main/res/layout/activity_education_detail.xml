@@ -312,6 +312,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
+                android:text="부서"
+                android:textColor="@color/colorText2" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
                 android:text="입실"
                 android:textColor="@color/colorText2" />
 
@@ -331,13 +339,6 @@
                 android:text="인정"
                 android:textColor="@color/colorText2" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2.5"
-                android:gravity="center"
-                android:text="태그"
-                android:textColor="@color/colorText2" />
         </LinearLayout>
 
         <View

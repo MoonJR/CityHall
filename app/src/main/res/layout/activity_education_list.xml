@@ -12,9 +12,10 @@
         android:padding="13dp">
 
         <Button
+
             android:id="@+id/buttonUpdateWork"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/button_color_selector"
             android:text="@string/education_list_work_data_update"
@@ -25,7 +26,7 @@
         <Button
             android:id="@+id/buttonResetWorker"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_weight="1"
             android:background="@drawable/button_color_selector"
@@ -33,19 +34,34 @@
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/buttonUploadEdu"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
-            android:layout_weight="1"
-            android:background="@drawable/button_color_selector"
-            android:text="@string/education_list_education_data_upload"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:layout_weight="1">
+
+
+            <Button
+                android:id="@+id/buttonUploadEdu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_color_selector"
+                android:text="@string/education_list_education_data_upload"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/buttonNewAttendanceEducation"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/new_attendance_edu_icon" />
+
+        </FrameLayout>
 
 
     </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerViewEducationList"

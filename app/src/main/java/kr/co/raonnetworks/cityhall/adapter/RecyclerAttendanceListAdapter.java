@@ -50,7 +50,14 @@ public class RecyclerAttendanceListAdapter extends RecyclerView.Adapter<Recycler
         viewHolder.mTextViewStart.setText(format.format(mEducationModel.getEduStart()));
         viewHolder.mTextViewEnd.setText(format.format(mEducationModel.getEduEnd()));
         viewHolder.mTextViewTime.setText(mEducationModel.getEduTime());
-        viewHolder.mTextViewTag.setText(Long.toHexString(data.getWorkerCard()));
+
+        String part = data.getWorkerPart();
+        if (part == null || part.equals("")) {
+            viewHolder.mTextViewPart.setText("-");
+        } else {
+            viewHolder.mTextViewPart.setText(data.getWorkerPart());
+        }
+
 
     }
 
@@ -71,10 +78,10 @@ public class RecyclerAttendanceListAdapter extends RecyclerView.Adapter<Recycler
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mTextViewName;
+        public TextView mTextViewPart;
         public TextView mTextViewStart;
         public TextView mTextViewEnd;
         public TextView mTextViewTime;
-        public TextView mTextViewTag;
 
         public ViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -82,7 +89,7 @@ public class RecyclerAttendanceListAdapter extends RecyclerView.Adapter<Recycler
             mTextViewStart = (TextView) itemLayoutView.findViewById(R.id.textViewStart);
             mTextViewEnd = (TextView) itemLayoutView.findViewById(R.id.textViewEnd);
             mTextViewTime = (TextView) itemLayoutView.findViewById(R.id.textViewTime);
-            mTextViewTag = (TextView) itemLayoutView.findViewById(R.id.textViewTag);
+            mTextViewPart = (TextView) itemLayoutView.findViewById(R.id.textViewPart);
         }
     }
 

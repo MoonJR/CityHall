@@ -17,6 +17,17 @@
         android:textColor="@color/colorText2" />
 
     <TextView
+        android:id="@+id/textViewPart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="부서"
+        android:textColor="@color/colorText2" />
+
+    <TextView
         android:id="@+id/textViewStart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -49,15 +60,5 @@
         android:text="인정"
         android:textColor="@color/colorText2" />
 
-    <TextView
-        android:id="@+id/textViewTag"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5"
-        android:ellipsize="marquee"
-        android:gravity="center"
-        android:singleLine="true"
-        android:text="태그"
-        android:textColor="@color/colorText2" />
 
 </LinearLayout>

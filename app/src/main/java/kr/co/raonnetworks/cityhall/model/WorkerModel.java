@@ -7,12 +7,14 @@ import java.util.Map;
  * Created by MoonJongRak on 2016. 2. 20..
  */
 public class WorkerModel {
+    public static final int FLAG_NOT_ACTIVE_WORKER = 0;
+    public static final int FLAG_ACTIVE_WORKER = 1;
 
     private String workerId;
     private String workerName;
     private String workerPart;
     private String workerDivision;
-    private long workerCard;
+    private String workerCard;
     private int workerStatus;
 
 
@@ -40,11 +42,11 @@ public class WorkerModel {
         this.workerPart = workerPart;
     }
 
-    public long getWorkerCard() {
+    public String getWorkerCard() {
         return workerCard;
     }
 
-    public void setWorkerCard(long workerCard) {
+    public void setWorkerCard(String workerCard) {
         this.workerCard = workerCard;
     }
 
@@ -62,7 +64,7 @@ public class WorkerModel {
         tmp.put("workerId", this.workerId);
         tmp.put("workerName", this.workerName);
         tmp.put("workerPart", this.workerPart);
-        tmp.put("workerCard", Long.toString(this.workerCard));
+        tmp.put("workerCard", this.workerCard);
         tmp.put("workerStatus", Integer.toString(this.workerStatus));
         tmp.put("workerDivision", this.workerDivision);
         return tmp.toString();
