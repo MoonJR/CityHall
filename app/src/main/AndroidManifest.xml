@@ -26,13 +26,13 @@
 
         </activity>
 
-        <activity android:name=".activity.LoginActivity" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.EducationListActivity"
             android:label="의정부시청 교육 내역">
-            <meta-data
-                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
+
         </activity>
         <activity
             android:name=".activity.EducationRegActivity"
@@ -47,6 +47,15 @@
         <activity
             android:name=".dialog.AttendanceCheckDialog"
             android:theme="@style/AppTheme.Dialog.NoActionBar" />
+        <activity android:name=".dialog.SerialCheckDialog">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
+        </activity>
+
     </application>
 
 </manifest>

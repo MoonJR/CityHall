@@ -8,7 +8,7 @@ import java.util.Date;
 public class AttendanceModel {
 
     private long attendanceId;
-    private long workerCard;
+    private String workerCard;
     private String eduId;
     private String workerId;
     private String workerName;
@@ -52,11 +52,11 @@ public class AttendanceModel {
         this.attendanceTime = new Date(attendanceTime);
     }
 
-    public long getWorkerCard() {
+    public String getWorkerCard() {
         return workerCard;
     }
 
-    public void setWorkerCard(long workerCard) {
+    public void setWorkerCard(String workerCard) {
         this.workerCard = workerCard;
     }
 
@@ -78,7 +78,7 @@ public class AttendanceModel {
 
 
     public static long makeAttendanceId(EducationModel eduModel, WorkerModel workerModel) {
-        return workerModel.getWorkerId() == null ? eduModel.getEduId().hashCode() + workerModel.getWorkerCard() : eduModel.getEduId().hashCode() + workerModel.getWorkerId().hashCode();
+        return workerModel.getWorkerId() == null ? eduModel.getEduId().hashCode() + workerModel.getWorkerCard().hashCode() : eduModel.getEduId().hashCode() + workerModel.getWorkerId().hashCode();
     }
 
     public String getWorkerDivision() {

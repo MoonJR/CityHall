@@ -7,6 +7,7 @@ import android.widget.RadioButton;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,13 +16,14 @@ import java.util.UUID;
 
 import kr.co.raonnetworks.cityhall.R;
 import kr.co.raonnetworks.cityhall.libs.CheckableButton;
+import kr.co.raonnetworks.cityhall.libs.DBManager;
 
 /**
  * Created by MoonJongRak on 2016. 2. 17..
  */
 public class EducationModel implements Serializable {
     public static final int FLAG_EDUCATION_NOT_UPLOADED = 0;
-    public static final int FLAG_EDUCATION_UPLOADED = 0;
+    public static final int FLAG_EDUCATION_UPLOADED = 1;
 
     public static final String EDU_DATA_PATTERN = "yyyy/MM/dd HH:mm";
     public static final int[] EDU_TARGET = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01,};
@@ -300,4 +302,5 @@ public class EducationModel implements Serializable {
         long during = this.eduEnd.getTime() - this.eduStart.getTime();
         return getEduTime(during);
     }
+
 }

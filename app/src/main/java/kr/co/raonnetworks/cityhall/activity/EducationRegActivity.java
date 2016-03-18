@@ -142,6 +142,7 @@ public class EducationRegActivity extends ActionBarActivity implements View.OnCl
                                         ((EditText) v).setError("일정 종료시간이 일정 시작시간 보다 같거나 빠를 수 없습니다.");
                                     } else {
                                         ((EditText) findViewById(R.id.editTextEduTime)).setText(eduTime);
+                                        ((EditText) v).setError(null);
                                     }
                                 }
                             }

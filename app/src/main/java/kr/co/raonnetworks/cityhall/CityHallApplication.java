@@ -34,7 +34,7 @@ public class CityHallApplication extends Application {
         //버전 관리하기 위해 기존 데이터 제거
         if (!getSharedPreferences("SETTING", MODE_PRIVATE).getBoolean(getVersion(), false)) {
             if (SQLiteManager.SQLITE_FILE.exists()) {
-                SQLiteManager.SQLITE_FILE.renameTo(new File(SQLiteManager.SQLITE_FILE.getParentFile(), SQLiteManager.SQLITE_FILE_NAME + ".bak"));
+                SQLiteManager.SQLITE_FILE.renameTo(new File(SQLiteManager.SQLITE_FILE.getParentFile(), SQLiteManager.SQLITE_FILE_NAME + "_" + getVersion() + ".bak"));
             }
             getSharedPreferences("SETTING", MODE_PRIVATE).edit().putBoolean(getVersion(), true).apply();
         }

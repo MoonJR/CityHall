@@ -59,12 +59,13 @@ public class RecyclerSelfAttendanceListAdapter extends RecyclerView.Adapter<Recy
         final WorkerModel mWorkerModel = new WorkerModel();
         final String workerName = data.getWorkerName();
         mWorkerModel.setWorkerId(data.getWorkerId());
-        mWorkerModel.setWorkerCard(data.getWorkerCard());
+        mWorkerModel.setWorkerCard(null);
 
 
         //출석하지 않은 데이터
         if (data.getAttendanceId() == 0) {
-            viewHolder.mButtonSelfAttendance.setText("출석");
+            viewHolder.mButtonSelfAttendance.setText("참석");
+            viewHolder.mButtonSelfAttendance.setBackgroundResource(R.drawable.button_color_selector);
             viewHolder.mButtonSelfAttendance.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -88,6 +89,7 @@ public class RecyclerSelfAttendanceListAdapter extends RecyclerView.Adapter<Recy
         } else {
             //출석한 데이터
             viewHolder.mButtonSelfAttendance.setText("취소");
+            viewHolder.mButtonSelfAttendance.setBackgroundResource(R.drawable.button_color_selector_rev);
             viewHolder.mButtonSelfAttendance.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

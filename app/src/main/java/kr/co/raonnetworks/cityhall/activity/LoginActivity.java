@@ -1,11 +1,15 @@
 package kr.co.raonnetworks.cityhall.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,7 +18,7 @@ import android.widget.Toast;
 import kr.co.raonnetworks.cityhall.R;
 import kr.co.raonnetworks.cityhall.libs.ConfigManager;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends Activity implements View.OnClickListener, TextView.OnEditorActionListener {
 
     ConfigManager mConfigManager;
 
@@ -34,6 +38,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             ((ImageView) findViewById(R.id.imageViewLogo)).setImageBitmap(BitmapFactory.decodeFile(ConfigManager.LOGO_FILE.getAbsolutePath()));
         }
         findViewById(R.id.buttonLogin).setOnClickListener(this);
+        ((EditText) findViewById(R.id.editTextPasswd)).setOnEditorActionListener(this);
 
     }
 
@@ -58,5 +63,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void startEducationListActivity() {
         startActivity(new Intent(getContext(), EducationListActivity.class));
         finish();
+    }
+
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        switch (v.getId()) {
+            case R.id.editTextPasswd:
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    findViewById(R.id.buttonLogin).callOnClick();
+                }
+                break;
+        }
+        return false;
     }
 }

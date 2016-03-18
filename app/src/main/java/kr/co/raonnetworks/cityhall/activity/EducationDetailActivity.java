@@ -9,8 +9,8 @@ import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -23,9 +23,9 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import kr.co.raonnetworks.cityhall.dialog.AttendanceCheckDialog;
 import kr.co.raonnetworks.cityhall.R;
 import kr.co.raonnetworks.cityhall.adapter.RecyclerAttendanceListAdapter;
+import kr.co.raonnetworks.cityhall.dialog.AttendanceCheckDialog;
 import kr.co.raonnetworks.cityhall.libs.DBManager;
 import kr.co.raonnetworks.cityhall.libs.SerialManager;
 import kr.co.raonnetworks.cityhall.model.EducationModel;
@@ -33,20 +33,20 @@ import kr.co.raonnetworks.cityhall.model.EducationModel;
 /**
  * Created by MoonJongRak on 2016. 2. 20..
  */
-public class EducationDetailActivity extends AppCompatActivity implements SerialManager.OnSerialFinishedListener, OnClickListener {
+public class EducationDetailActivity extends ActionBarActivity implements SerialManager.OnSerialFinishedListener, OnClickListener {
     private static EducationModel mEducationModel;
 
     private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntentNfc;
     private RecyclerAttendanceListAdapter mRecyclerAttendanceListAdapter;
     private SerialManager mSerialManager;
-    private TimerTask mTimerTaskCardNotify;
     private Timer mTimerCardNotify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_education_detail);
+        setActionBar();
         findViewById(R.id.buttonSelfAttendance).setOnClickListener(this);
 
         initNfc();
@@ -57,9 +57,7 @@ public class EducationDetailActivity extends AppCompatActivity implements Serial
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mRecyclerAttendanceListAdapter);
 
-        mSerialManager = SerialManager.getInstance(getContext());
-
-        mTimerTaskCardNotify = new TimerTask() {
+        TimerTask mTimerTaskCardNotify = new TimerTask() {
             @Override
             public void run() {
                 runOnUiThread(new Runnable() {
@@ -79,6 +77,15 @@ public class EducationDetailActivity extends AppCompatActivity implements Serial
         mTimerCardNotify = new Timer();
         mTimerCardNotify.schedule(mTimerTaskCardNotify, 0, 800);
 
+    }
+
+
+    private void setActionBar() {
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException ignore) {
+
+        }
     }
 
     private void initNfc() {
@@ -103,8 +110,8 @@ public class EducationDetailActivity extends AppCompatActivity implements Serial
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete:
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setIcon(R.mipmap.ic_launcher)
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                        .setIcon(R.mipmap.ic_launcher)
                         .setTitle("알림");
                 if (mRecyclerAttendanceListAdapter.getItemCount() != 0) {
                     builder.setMessage("출석 내역이 있는 데이터는 삭제할 수 없습니다.")
@@ -124,7 +131,25 @@ public class EducationDetailActivity extends AppCompatActivity implements Serial
                 builder.show();
                 break;
             case R.id.action_upload:
-                mSerialManager.startEducationUpLoad(mEducationModel);
+                builder = new AlertDialog.Builder(getContext())
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setTitle("알림")
+                        .setNegativeButton("취소", null)
+                        .setPositiveButton("업로드", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mSerialManager.startEducationUpLoad(mEducationModel);
+                            }
+                        });
+                if (mEducationModel.getEduUploaded() == EducationModel.FLAG_EDUCATION_UPLOADED) {
+                    builder.setMessage("이미 업로드 된 교육입니다.\n다시 업로드 하시겠습니까?");
+                } else {
+                    builder.setMessage("교육정보를 업로드 합니다.\n업로드 하시겠습니까?");
+                }
+                builder.show();
+                break;
+            case android.R.id.home:
+                onBackPressed();
                 break;
         }
 
@@ -155,9 +180,11 @@ public class EducationDetailActivity extends AppCompatActivity implements Serial
             }
         }
 
-        mSerialManager.setOnSerialFinishedListener(this);
         mRecyclerAttendanceListAdapter.notifyUpdate();
         ((TextView) findViewById(R.id.textViewAttendanceCount)).setText(Integer.toString(mRecyclerAttendanceListAdapter.getItemCount()));
+        mSerialManager = SerialManager.getInstance(getContext());
+        mSerialManager.setOnSerialFinishedListener(this);
+        updateEduData();
 
     }
 
@@ -198,13 +225,17 @@ public class EducationDetailActivity extends AppCompatActivity implements Serial
 
 
     @Override
-    public void onFinished(boolean isSuccess, Exception e) {
+    public void onFinished(boolean isSuccess, boolean isDataSend, Exception e) {
         if (isSuccess) {
-            DBManager.uploadEducation(mEducationModel);
-            Toast.makeText(getContext(), "교육정보 업로드 성공.", Toast.LENGTH_LONG).show();
+            if (isDataSend) {
+                DBManager.uploadEducation(mEducationModel);
+                Toast.makeText(getContext(), "교육정보 업로드 성공.", Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(getContext(), "교육정보 업로드 실패.", Toast.LENGTH_LONG).show();
         }
+
+
         updateEduData();
         dismissProgressDialogDataProcess();
     }
