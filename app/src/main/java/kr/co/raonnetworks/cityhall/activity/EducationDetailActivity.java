@@ -94,7 +94,7 @@ public class EducationDetailActivity extends ActionBarActivity implements Serial
         if (mNfcAdapter == null) {
             Toast.makeText(getContext(), "해당 기기는 NFC를 이용할 수 없어 출석체크가 불가능 합니다.", Toast.LENGTH_LONG).show();
         } else {
-            mPendingIntentNfc = PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), AttendanceCheckDialog.class), PendingIntent.FLAG_UPDATE_CURRENT);
+            mPendingIntentNfc = PendingIntent.getActivity(getContext(), 0, new Intent(getContext(), AttendanceCheckDialog.class), 0);
         }
 
     }
@@ -178,6 +178,8 @@ public class EducationDetailActivity extends ActionBarActivity implements Serial
             } else {
                 mNfcAdapter.enableForegroundDispatch(this, mPendingIntentNfc, null, null);
             }
+        } else {
+            Toast.makeText(getContext(), "NFC를 가져올 수 없습니다.\nNFC 미지원 단말이 아닌 경우 어플리케이션을 재실행 해주세요.", Toast.LENGTH_LONG).show();
         }
 
         mRecyclerAttendanceListAdapter.notifyUpdate();
